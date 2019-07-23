@@ -6,7 +6,7 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/07/23 12:02:55 by evogel           ###   ########.fr       */
+/*   Updated: 2019/07/23 16:24:12 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	init_scene(t_env *env)
 	if (!(env->objs = (t_obj *)malloc(env->num_obj * sizeof(t_obj))))
 		exit(-1);
 	env->objs[0].type = 1; 
-	env->objs[0].pos = vec(150, 50, 0);
+	env->objs[0].pos = vec(0, -50, 0);
 	env->objs[0].rad = 100;
 	env->objs[0].rot = vec(0, 0, 0);
 	env->objs[0].col = color(1, 0, 0); 

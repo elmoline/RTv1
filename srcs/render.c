@@ -6,7 +6,7 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 16:37:45 by evogel            #+#    #+#             */
-/*   Updated: 2019/07/23 14:50:41 by evogel           ###   ########.fr       */
+/*   Updated: 2019/07/23 16:13:18 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ t_obj	*get_obj_intersect(t_ray *ray, t_env *env, float *t)
 	closest = -1;
 	while (i < env->num_obj)
 	{
+		if (env->objs[i].type == 0 && plane_intersect(ray, &env->objs[i], t))
+			closest = i;
 		if (env->objs[i].type == 1 && sphere_intersect(ray, &env->objs[i], t))
 			closest = i;
 		if (env->objs[i].type == 2 && cylinder_intersect(ray, &env->objs[i], t))
@@ -37,29 +39,18 @@ int		cast_ray(t_env *env, t_ray *ray)
 {
 	float t = 2000000000.0f; //view limit
 	int j = 0;
-	t_col color;
+	t_col col;
 	t_obj *curr_obj;
 
 	if (!(curr_obj = get_obj_intersect(ray, env, &t)))
 		return (0);
-	color.red = 0;
-	color.green = 0;
-	color.blue = 0;
+	col = color(0, 0, 0);
 
 	t_vec p_hit;
 	p_hit = add_vec(ray->ori, scale(t, ray->dir));
 
 	t_vec n_hit;
 	n_hit = normalize(sub_vec(p_hit, curr_obj->pos));
-
-	/* Shadow pseudocode 
-	 *
-	 * shade = dot_product( light_vector, normal_vector )
-	 * if ( shade < 0 )
-	 * shade = 0
-	 * point_color = object_color * ( ambient_coefficient + 
-	 * diffuse_coefficient * shade )
-	 */
 
 	while (j < env->num_light)
 	{
@@ -74,13 +65,13 @@ int		cast_ray(t_env *env, t_ray *ray)
 			if (shade < 0.0f)
 				shade = 0.0f;
 			float diff = 1 - env->ambient;
-			color.red += (diff * shade * env->lights[j].col.red + env->ambient) * curr_obj->col.red;
-			color.green += (diff * shade * env->lights[j].col.green + env->ambient) * curr_obj->col.green;
-			color.blue += (diff * shade * env->lights[j].col.blue + env->ambient) * curr_obj->col.blue;
+			col.red += (diff * shade * env->lights[j].col.red + env->ambient) * curr_obj->col.red;
+			col.green += (diff * shade * env->lights[j].col.green + env->ambient) * curr_obj->col.green;
+			col.blue += (diff * shade * env->lights[j].col.blue + env->ambient) * curr_obj->col.blue;
 		}
 		++j;
 	}
-	return (((unsigned char)min(color.red * 255.0f, 255.0f) << 16) | ((unsigned char)min(color.green * 255.0f, 255.0f) << 8) | ((unsigned char)min(color.blue * 255.0f, 255.0f)));
+	return (((unsigned char)min(col.red * 255.0f, 255.0f) << 16) | ((unsigned char)min(col.green * 255.0f, 255.0f) << 8) | ((unsigned char)min(col.blue * 255.0f, 255.0f)));
 }
 
 /* Pseudocode for handling reflection/refraction

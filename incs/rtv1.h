@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/07/23 14:50:48 by evogel           ###   ########.fr       */
+/*   Updated: 2019/07/23 16:13:12 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ t_vec	normalize(t_vec v);
 int		render(t_env *env);
 int		sphere_intersect(t_ray *r, t_obj *s, float *t);
 int		cylinder_intersect(t_ray *r, t_obj *s, float *t);
+int		plane_intersect(t_ray *r, t_obj *s, float *t);
 
 int		deal_key(int key, void *s);
 int		deal_close(void);
