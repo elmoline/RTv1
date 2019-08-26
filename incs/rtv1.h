@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/07/23 16:13:12 by evogel           ###   ########.fr       */
+/*   Updated: 2019/08/02 19:42:22 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 /* Width and height of out image */
 #define WIN_X	1080
 #define WIN_Y	720
+#define EPSILON	0.0000001f
 
 /* The vector */
 typedef struct	s_vec
@@ -102,6 +103,22 @@ typedef struct	s_env
 	float	ambient;
 }				t_env;
 
+typedef struct	s_vec4
+{
+    float		x;
+	float		y;
+	float		z;
+	float		w;
+}				t_vec4;
+
+typedef struct	s_matrix
+{
+	t_vec4		row0;
+	t_vec4		row1;
+	t_vec4		row2;
+	t_vec4		row3;
+}				t_matrix;
+
 t_vec	vec(float x, float y, float z);
 t_col	color(float red, float green, float blue);
 t_vec	sub_vec(t_vec v1, t_vec v2);
@@ -114,10 +131,15 @@ int		render(t_env *env);
 int		sphere_intersect(t_ray *r, t_obj *s, float *t);
 int		cylinder_intersect(t_ray *r, t_obj *s, float *t);
 int		plane_intersect(t_ray *r, t_obj *s, float *t);
+int		cone_intersect(t_ray *r, t_obj *s, float *t);
 
 int		deal_key(int key, void *s);
 int		deal_close(void);
 void	write_ppm(int key, int *img, int win_x, int win_y);
 int		error2(void);
+
+t_vec	rotate_x(t_vec pt, double theta);
+t_vec	rotate_y(t_vec pt, double theta);
+t_vec	rotate_z(t_vec pt, double theta);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 16:37:45 by evogel            #+#    #+#             */
-/*   Updated: 2019/07/23 16:13:18 by evogel           ###   ########.fr       */
+/*   Updated: 2019/08/26 12:02:08 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ t_obj	*get_obj_intersect(t_ray *ray, t_env *env, float *t)
 			closest = i;
 		if (env->objs[i].type == 2 && cylinder_intersect(ray, &env->objs[i], t))
 			closest = i;
+		if (env->objs[i].type == 3 && cone_intersect(ray, &env->objs[i], t))
+			closest = i;
 		//add check for other types of objects
 		++i;
 	}
@@ -42,16 +44,18 @@ int		cast_ray(t_env *env, t_ray *ray)
 	t_col col;
 	t_obj *curr_obj;
 
+	// ray->ori.z += 0.01f;
 	if (!(curr_obj = get_obj_intersect(ray, env, &t)))
 		return (0);
 	col = color(0, 0, 0);
 
 	t_vec p_hit;
+	ray->ori.z -= 0.1f; // solve everything
 	p_hit = add_vec(ray->ori, scale(t, ray->dir));
+	
 
 	t_vec n_hit;
 	n_hit = normalize(sub_vec(p_hit, curr_obj->pos));
-
 	while (j < env->num_light)
 	{
 		t_ray light_ray;

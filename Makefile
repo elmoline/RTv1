@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: evogel <marvin@42.fr>                      +#+  +:+       +#+         #
+#    By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 16:47:44 by evogel            #+#    #+#              #
-#    Updated: 2019/07/20 15:34:17 by evogel           ###   ########.fr        #
+#    Updated: 2019/07/26 13:32:26 by wael-mos         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,7 @@ D_LIBS = $(foreach LIB, $(LIBS), $(basename $(LIB))/$(LIB))
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror
 
 MLXFLAGS = -framework OpenGL -framework AppKit
 

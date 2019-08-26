@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/07/23 16:24:12 by evogel           ###   ########.fr       */
+/*   Updated: 2019/08/08 13:14:45 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,37 +22,44 @@ void	init_scene(t_env *env)
 	env->cam.fov = 30;
 
 	env->ambient = 0.06f;
-	env->num_light = 2;
+	env->num_light = 1;
 	if (!(env->lights = (t_light *)malloc(env->num_light * sizeof(t_light))))
 		exit(-1);
 	env->lights[0].pos = vec(300, 300, 350); 
 	env->lights[0].col = color(1, 1, 1); 
-	env->lights[1].pos = vec(-300, -300, 400); 
-	env->lights[1].col = color(0, 0, 0); 
+	/*env->lights[1].pos = vec(300, -300, 400); 
+	env->lights[1].col = color(1, 1, 1); */
 
-	env->num_obj = 3;
+	env->num_obj = 4;
 	if (!(env->objs = (t_obj *)malloc(env->num_obj * sizeof(t_obj))))
 		exit(-1);
-	env->objs[0].type = 1; 
-	env->objs[0].pos = vec(0, -50, 0);
+	env->objs[0].type = 0; 
+	env->objs[0].pos = vec(90, -70, 0);
 	env->objs[0].rad = 100;
-	env->objs[0].rot = vec(0, 0, 0);
+	env->objs[0].rot = vec(0, -20, -10);
 	env->objs[0].col = color(1, 0, 0); 
 	env->objs[0].reflect = 0.6;
 
 	env->objs[1].type = 1; 
-	env->objs[1].pos = vec(-100, 30, -5);
+	env->objs[1].pos = vec(150, 30, 0);
 	env->objs[1].rad = 50;
 	env->objs[1].rot = vec(0, 0, 0);
 	env->objs[1].col = color(0, 1, 1); 
 	env->objs[1].reflect = 0.2;
 	
 	env->objs[2].type = 2; 
-	env->objs[2].pos = vec(-160, -70, -60);
+	env->objs[2].pos = vec(-100, -50, -60);
 	env->objs[2].rad = 60;
 	env->objs[2].rot = vec(0, 0, 0);
 	env->objs[2].col = color(0, 1, 0); 
 	env->objs[2].reflect = 0;
+	
+	env->objs[3].type = 3; 
+	env->objs[3].pos = vec(-200, 0, -60);
+	env->objs[3].rad = 0.85;
+	env->objs[3].rot = vec(0, 1, 0);
+	env->objs[3].col = color(1, 1, 0); 
+	env->objs[3].reflect = 0;
 	
 }
 

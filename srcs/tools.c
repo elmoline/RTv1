@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tools.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 16:51:38 by evogel            #+#    #+#             */
-/*   Updated: 2019/07/23 14:50:44 by evogel           ###   ########.fr       */
+/*   Updated: 2019/07/26 13:50:24 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,17 @@ t_vec	vec(float x, float y, float z)
         res.x = x;
         res.y = y;
         res.z = z;
+        return (res);
+}
+
+t_vec4	vec4(float x, float y, float z, float w)
+{
+        t_vec4  res;
+
+        res.x = x;
+        res.y = y;
+        res.z = z;
+        res.w = w;
         return (res);
 }
 
@@ -82,6 +93,49 @@ t_vec normalize(t_vec v)
 	if (mag > 0)
 		res = scale(1 / mag, v);
 	return (res);
+}
+
+t_vec		mul_vec_mat(t_vec vec, t_matrix mat)
+{
+	t_vec	ret;
+
+	ret.x = mat.row0.x * vec.x + mat.row1.x * vec.y + mat.row2.x * vec.z + mat.row3.x * 1;
+	ret.y = mat.row0.y * vec.x + mat.row1.y * vec.y + mat.row2.y * vec.z + mat.row3.y * 1;
+	ret.z = mat.row0.z * vec.x + mat.row1.z * vec.y + mat.row2.z * vec.z + mat.row3.z * 1;
+	return (ret);
+}
+
+t_vec	rotate_x(t_vec pt, double theta)
+{
+	t_matrix ret;
+
+	ret.row0 = vec4(1, 0, 0, 0);
+	ret.row1 = vec4(0, cos(theta), sin(theta), 0);
+	ret.row2 = vec4(0, -sin(theta), cos(theta), 0);
+	ret.row3 = vec4(0, 0, 0, 1);
+	return (mul_vec_mat(pt, ret));
+}
+
+t_vec	rotate_y(t_vec pt, double theta)
+{
+	t_matrix ret;
+
+	ret.row0 = vec4(cos(theta), 0, -sin(theta), 0);
+	ret.row1 = vec4(0, 1, 0, 0);
+	ret.row2 = vec4(sin(theta), 0, cos(theta), 0);
+	ret.row3 = vec4(0, 0, 0, 1);
+	return (mul_vec_mat(pt, ret));
+}
+
+t_vec	rotate_z(t_vec pt, double theta)
+{
+	t_matrix ret;
+
+	ret.row0 = vec4(cos(theta), sin(theta), 0, 0);
+	ret.row1 = vec4(-sin(theta), cos(theta), 0, 0);
+	ret.row2 = vec4(0, 0, 1, 0);
+	ret.row3 = vec4(0, 0, 0, 1);
+	return (mul_vec_mat(pt, ret));
 }
 
 int			deal_key(int key, void *param)
