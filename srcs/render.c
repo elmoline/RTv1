@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 16:37:45 by evogel            #+#    #+#             */
-/*   Updated: 2019/08/26 12:02:08 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/09/02 18:48:17 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ t_obj	*get_obj_intersect(t_ray *ray, t_env *env, float *t)
 			closest = i;
 		if (env->objs[i].type == 3 && cone_intersect(ray, &env->objs[i], t))
 			closest = i;
-		//add check for other types of objects
 		++i;
 	}
 	if (closest == -1)
@@ -44,7 +43,6 @@ int		cast_ray(t_env *env, t_ray *ray)
 	t_col col;
 	t_obj *curr_obj;
 
-	// ray->ori.z += 0.01f;
 	if (!(curr_obj = get_obj_intersect(ray, env, &t)))
 		return (0);
 	col = color(0, 0, 0);
@@ -52,15 +50,25 @@ int		cast_ray(t_env *env, t_ray *ray)
 	t_vec p_hit;
 	ray->ori.z -= 0.1f; // solve everything
 	p_hit = add_vec(ray->ori, scale(t, ray->dir));
-	
 
 	t_vec n_hit;
-	n_hit = normalize(sub_vec(p_hit, curr_obj->pos));
+	//THIS n_hit ONLY WORKS FOR SPHERES
+	//Have to make different n calc for shapes
+	if (curr_obj->type == 0)
+		n_hit = vec(-1 * curr_obj->rot.x, -1 * curr_obj->rot.y, -1 * curr_obj->rot.z);
+	else if (curr_obj->type == 1)
+		n_hit = normalize(sub_vec(p_hit, curr_obj->pos));
+	else if (curr_obj->type == 2)
+		n_hit = normalize(sub_vec(p_hit, vec(curr_obj->pos.x, 0, curr_obj->pos.x)));
+	else
+		n_hit = normalize(sub_vec(p_hit, curr_obj->pos));
+
 	while (j < env->num_light)
 	{
 		t_ray light_ray;
 		light_ray.ori = p_hit;
 		light_ray.dir = normalize(sub_vec(env->lights[j].pos, p_hit));
+//		ft_printf("light.dir(%.2f, %.2f, %.2f)\n", light_ray.dir.x, light_ray.dir.y, light_ray.dir.z);
 		
 		if (!get_obj_intersect(&light_ray, env, &t))
 		{

@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/20 14:54:31 by evogel            #+#    #+#             */
-/*   Updated: 2019/08/26 12:02:45 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/09/02 18:01:52 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,12 @@ http://woo4.me/wootracer/cylinder-intersection/ */
 
 
 	t_vec p0 = sub_vec(r->ori, s->pos);
-
+//	p0 = rotate_z(p0, M_PI * 0.5);
 
 	A = (r->dir.x * r->dir.x) + (r->dir.z * r->dir.z);
 	B = 2 * (r->dir.x * p0.x) + 2 * (r->dir.z * p0.z);
 	C = (p0.x * p0.x) + (p0.z * p0.z) - (s->rad * s->rad);
 
-	float epsilon;
-	epsilon = 0.0000001f;
 	discr = B * B - 4 * A * C;
 	if (discr >= 0)
 	{
@@ -116,7 +114,7 @@ int        plane_intersect(t_ray *r, t_obj *s, float *t)
 	int ret = 0;
 	float    A;
 	float    B;
-	// float    C;
+	float    t0;
 	// float    discr;
 	float epsilon;
 
@@ -131,9 +129,12 @@ int        plane_intersect(t_ray *r, t_obj *s, float *t)
 	}
 	else
 	{
-		*t = A / B;
-		if (*t > 0)
+		t0 = A / B;
+		if (t0 > epsilon && t0 < *t)
+		{
+			*t = t0;
 			ret = 1;
+		}
 	}
 	return (ret);
 }

@@ -6,11 +6,16 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 16:51:38 by evogel            #+#    #+#             */
-/*   Updated: 2019/07/26 13:50:24 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/09/02 17:07:59 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
+
+float	deg2rad(int d)
+{
+	return (d * M_PI / 180);
+}
 
 t_vec	vec(float x, float y, float z)
 {
@@ -146,7 +151,7 @@ int			deal_key(int key, void *param)
 	if (key == 53)
 		exit(1);
 	else if (key == 36)
-		write_ppm(key, env->mlx.data, env->win_x, env->win_y);
+		write_ppm(key, env);
 	return (0);
 }
 

@@ -6,39 +6,48 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/08/08 13:14:45 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/09/02 18:53:30 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
+
+void	get_plane_n(t_obj *p, t_vec rot)
+{
+	t_vec n;
+
+	n = vec(0, -1, 0);
+	n = rotate_x(n, rot.x);
+	n = rotate_z(n, rot.z);
+	n = rotate_y(n, rot.y);
+	p->rot = normalize(n);
+}
 
 void	init_scene(t_env *env)
 {
 	env->win_x = WIN_X;
 	env->win_y = WIN_Y;
 
-	env->cam.pos = vec(0, 0, 1000);
+	env->cam.pos = vec(-100, 100, 1500);
 	env->cam.rot = vec(0, 0, 0);
 	env->cam.fov = 30;
 
-	env->ambient = 0.06f;
+	env->ambient = 0.15f;
 	env->num_light = 1;
 	if (!(env->lights = (t_light *)malloc(env->num_light * sizeof(t_light))))
 		exit(-1);
-	env->lights[0].pos = vec(300, 300, 350); 
+	env->lights[0].pos = vec(300, 100, 400); 
 	env->lights[0].col = color(1, 1, 1); 
-	/*env->lights[1].pos = vec(300, -300, 400); 
-	env->lights[1].col = color(1, 1, 1); */
 
 	env->num_obj = 4;
 	if (!(env->objs = (t_obj *)malloc(env->num_obj * sizeof(t_obj))))
 		exit(-1);
 	env->objs[0].type = 0; 
-	env->objs[0].pos = vec(90, -70, 0);
-	env->objs[0].rad = 100;
-	env->objs[0].rot = vec(0, -20, -10);
+	env->objs[0].pos = vec(500, -100, -500);
+	env->objs[0].rad = 0;
+	get_plane_n(&env->objs[0], vec(deg2rad(0), deg2rad(0), deg2rad(0)));
 	env->objs[0].col = color(1, 0, 0); 
-	env->objs[0].reflect = 0.6;
+	env->objs[0].reflect = 0;
 
 	env->objs[1].type = 1; 
 	env->objs[1].pos = vec(150, 30, 0);
@@ -55,12 +64,33 @@ void	init_scene(t_env *env)
 	env->objs[2].reflect = 0;
 	
 	env->objs[3].type = 3; 
-	env->objs[3].pos = vec(-200, 0, -60);
-	env->objs[3].rad = 0.85;
+	env->objs[3].pos = vec(-300, 0, 300);
+	env->objs[3].rad = 0.8;
 	env->objs[3].rot = vec(0, 1, 0);
 	env->objs[3].col = color(1, 1, 0); 
 	env->objs[3].reflect = 0;
+/*	
+	env->objs[4].type = 0; 
+	env->objs[4].pos = vec(0, -300, 0);
+	env->objs[4].rad = 0;
+	get_plane_n(&env->objs[4], vec(deg2rad(0), deg2rad(0), deg2rad(0)));
+	env->objs[4].col = color(1, 1, 1); 
+	env->objs[4].reflect = 0;
 	
+	env->objs[5].type = 0; 
+	env->objs[5].pos = vec(-500, 0, 0);
+	env->objs[5].rad = 100;
+	get_plane_n(&env->objs[5], vec(deg2rad(0), deg2rad(0), deg2rad(-90)));
+	env->objs[5].col = color(0.5, 0.5, 1); 
+	env->objs[5].reflect = 0;
+	
+	env->objs[6].type = 0; 
+	env->objs[6].pos = vec(700, 0, 0);
+	env->objs[6].rad = 0;
+	env->objs[6].rot = vec(deg2rad(0), deg2rad(0), deg2rad(-90));
+	env->objs[6].col = color(0.5, 1, 0.5); 
+	env->objs[6].reflect = 0;
+*/
 }
 
 int		window_init(t_mlx *mlx, int win_x, int win_y)
@@ -92,7 +122,7 @@ int		main(int ac, char **av)
 		error2();
 	render(&env);
 	mlx_hook(env.mlx.win_ptr, 17, (1L << 17), deal_close, NULL);
-	mlx_hook(env.mlx.win_ptr, 2, 0, deal_key, NULL);
+	mlx_hook(env.mlx.win_ptr, 2, 0, deal_key, &env);
 	mlx_loop(env.mlx.mlx_ptr);
 	return (0);
 }

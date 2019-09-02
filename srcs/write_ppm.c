@@ -6,7 +6,7 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/22 12:10:35 by evogel            #+#    #+#             */
-/*   Updated: 2019/07/22 17:46:32 by evogel           ###   ########.fr       */
+/*   Updated: 2019/09/02 17:13:13 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static char	*make_filename(int n)
 {
 	char		*filename;
 
-	if (!(filename = ft_strnew(38)))
+	if (!(filename = ft_strnew(17)))
 		return (NULL);
 	ft_strcat(filename, "./screenshot");
 	filename[12] = n / 10 + '0';
@@ -25,19 +25,21 @@ static char	*make_filename(int n)
 	return (filename);
 }
 
-static void	data_fill_ppm(int fd, int *data, int win_x, int win_y)
+static void	data_fill_ppm(int fd, t_env *env)
 {
-	int			i;
+	int	i;
+	int	*data;
 
+	data = env->mlx.data;
 	ft_putendl_fd("P3", fd);
-	ft_putnbr_fd(win_x, fd);
+	ft_putnbr_fd(env->win_x, fd);
 	ft_putchar_fd(' ', fd);
-	ft_putnbr_fd(win_y, fd);
+	ft_putnbr_fd(env->win_y, fd);
 	ft_putchar_fd('\n', fd);
 	ft_putnbr_fd(255, fd);
 	ft_putchar_fd('\n', fd);
 	i = 2;
-	while (i < win_x * win_y * 4)
+	while (i < env->win_x * env->win_y * 4)
 	{
 		while (i % 4 != 3 && i >= 0)
 		{
@@ -49,11 +51,12 @@ static void	data_fill_ppm(int fd, int *data, int win_x, int win_y)
 	ft_putchar_fd('\n', fd);
 }
 
-void		write_ppm(int key, int *img, int win_x, int win_y)
+void		write_ppm(int key, t_env *env)
 {
-	static int	n = 1;
-	char		*filename;
+	int		n;
+	char	*filename;
 
+	n = 1;
 	while (n < 100)
 	{
 		if (!(filename = make_filename(n)))
@@ -65,7 +68,9 @@ void		write_ppm(int key, int *img, int win_x, int win_y)
 	}
 	if (n == 100)
 		return (ft_putendl("Screenshot limit reached"));
-	data_fill_ppm(key, img, win_x, win_y);
+	data_fill_ppm(key, env);
+	mlx_string_put(env->mlx.mlx_ptr, env->mlx.win_ptr, 10, 10, 0xffffff, 
+			"Screenshot successfully created");
 	ft_printf("%s was successfully created\n", filename);
 	free(filename);
 	close(key);

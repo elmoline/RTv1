@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/08/02 19:42:22 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/09/02 16:46:07 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ float	dot(t_vec v1, t_vec v2);
 t_vec	scale(float c, t_vec v);
 t_vec	add_vec(t_vec v1, t_vec v2);
 t_vec	normalize(t_vec v);
+float	deg2rad(int d);
 
 int		render(t_env *env);
 int		sphere_intersect(t_ray *r, t_obj *s, float *t);
@@ -135,7 +136,7 @@ int		cone_intersect(t_ray *r, t_obj *s, float *t);
 
 int		deal_key(int key, void *s);
 int		deal_close(void);
-void	write_ppm(int key, int *img, int win_x, int win_y);
+void	write_ppm(int key, t_env *env);
 int		error2(void);
 
 t_vec	rotate_x(t_vec pt, double theta);
