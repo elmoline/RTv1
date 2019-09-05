@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/20 14:54:31 by evogel            #+#    #+#             */
-/*   Updated: 2019/09/02 18:01:52 by evogel           ###   ########.fr       */
+/*   Updated: 2019/09/05 15:17:49 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,19 +145,23 @@ int cone_intersect(t_ray *r, t_obj *s, float *t)
     int        ret;
     ret = 0;
     epsilon = 0.00001f;
+
+	float angle;
+	angle = 1 - (s->rad / M_PI);
+
     /* A = d.d, the vector dot product of the direction */
     float A;
-    A = dot(r->dir, s->rot) * dot(r->dir, s->rot) - s->rad * s->rad;
+    A = dot(r->dir, s->rot) * dot(r->dir, s->rot) - angle * angle;
     t_vec p0;
     p0 = sub_vec(r->ori, s->pos);
     
     /* 2d.(p0 - c) */
     float B;
-    B = 2 * ((dot(r->dir, s->rot) * dot(p0, s->rot)) - dot(r->dir, p0) * s->rad * s->rad);
+    B = 2 * ((dot(r->dir, s->rot) * dot(p0, s->rot)) - dot(r->dir, p0) * angle * angle);
     
     /* (p0 - c).(p0 - c) - r^2 */
     float C;
-    C = dot(p0, s->rot) * dot(p0, s->rot) - dot(p0, p0) * s->rad * s->rad;
+    C = dot(p0, s->rot) * dot(p0, s->rot) - dot(p0, p0) * angle * angle;
     
     /* Solving the discriminant */
     float discr;

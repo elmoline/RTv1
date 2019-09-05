@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 16:37:45 by evogel            #+#    #+#             */
-/*   Updated: 2019/09/02 18:48:17 by evogel           ###   ########.fr       */
+/*   Updated: 2019/09/05 15:58:12 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,21 +45,25 @@ int		cast_ray(t_env *env, t_ray *ray)
 
 	if (!(curr_obj = get_obj_intersect(ray, env, &t)))
 		return (0);
+//	else
+//		col = curr_obj->col;
 	col = color(0, 0, 0);
 
 	t_vec p_hit;
-	ray->ori.z -= 0.1f; // solve everything
 	p_hit = add_vec(ray->ori, scale(t, ray->dir));
+	p_hit.z -= 0.2f;
 
 	t_vec n_hit;
 	//THIS n_hit ONLY WORKS FOR SPHERES
 	//Have to make different n calc for shapes
 	if (curr_obj->type == 0)
-		n_hit = vec(-1 * curr_obj->rot.x, -1 * curr_obj->rot.y, -1 * curr_obj->rot.z);
+		n_hit = scale(-1, curr_obj->rot);
 	else if (curr_obj->type == 1)
 		n_hit = normalize(sub_vec(p_hit, curr_obj->pos));
 	else if (curr_obj->type == 2)
-		n_hit = normalize(sub_vec(p_hit, vec(curr_obj->pos.x, 0, curr_obj->pos.x)));
+		n_hit = normalize(sub_vec(p_hit, vec(curr_obj->pos.x, p_hit.y, curr_obj->pos.z)));
+	else if (curr_obj->type == 3)
+		n_hit = normalize(vec((p_hit.x - curr_obj->pos.x) / curr_obj->rad, curr_obj->rad, (p_hit.z - curr_obj->pos.z) / curr_obj->rad));
 	else
 		n_hit = normalize(sub_vec(p_hit, curr_obj->pos));
 
@@ -68,12 +72,14 @@ int		cast_ray(t_env *env, t_ray *ray)
 		t_ray light_ray;
 		light_ray.ori = p_hit;
 		light_ray.dir = normalize(sub_vec(env->lights[j].pos, p_hit));
-//		ft_printf("light.dir(%.2f, %.2f, %.2f)\n", light_ray.dir.x, light_ray.dir.y, light_ray.dir.z);
 		
-		if (!get_obj_intersect(&light_ray, env, &t))
+		t_obj *shadow_obj;
+		float tmp = 2000000000000000.0f;
+		if ((shadow_obj = get_obj_intersect(&light_ray, env, &tmp)) == NULL
+				|| dot(sub_vec(sub_vec(env->lights[j].pos, p_hit), add_vec(p_hit, scale(tmp, light_ray.dir))), vec(1, 1, 1)) < 0)
 		{
 			float shade;
-			shade = dot(light_ray.dir, n_hit);
+			shade = dot(n_hit, light_ray.dir);
 			if (shade < 0.0f)
 				shade = 0.0f;
 			float diff = 1 - env->ambient;
@@ -81,8 +87,20 @@ int		cast_ray(t_env *env, t_ray *ray)
 			col.green += (diff * shade * env->lights[j].col.green + env->ambient) * curr_obj->col.green;
 			col.blue += (diff * shade * env->lights[j].col.blue + env->ambient) * curr_obj->col.blue;
 		}
+		else if (p_hit.x > 0 && p_hit.y == -100 && p_hit.z > 0)
+		{
+			ft_printf("p_hit(%.1f, %.1f, %.1f)\n", p_hit.x, p_hit.y, p_hit.z);
+			ft_printf("light dir (%.2f, %.2f, %.2f)\n", light_ray.dir.x, light_ray.dir.y, light_ray.dir.z);
+			t_vec l_hit;
+			l_hit = add_vec(p_hit, scale(tmp, light_ray.dir));
+			ft_printf("light hit (%.2f, %.2f, %.2f)\n", l_hit.x, l_hit.y, l_hit.z);
+			ft_printf("tmp = %f\n", tmp);
+		}
 		++j;
 	}
+	
+//	if (col.red + col.green + col.blue == 0)
+//		ft_printf("obj_type == %d | col = (%.2f,%.2f,%.2f)\n", curr_obj->type, col.red, col.green, col.blue);
 	return (((unsigned char)min(col.red * 255.0f, 255.0f) << 16) | ((unsigned char)min(col.green * 255.0f, 255.0f) << 8) | ((unsigned char)min(col.blue * 255.0f, 255.0f)));
 }
 
