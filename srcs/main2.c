@@ -6,17 +6,21 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/09/05 15:16:53 by evogel           ###   ########.fr       */
+/*   Updated: 2019/09/09 17:37:09 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-void	get_plane_n(t_obj *p, t_vec rot)
+void	get_plane_n(t_env *env, t_obj *p, t_vec rot)
 {
 	t_vec n;
 
-	n = vec(0, -1, 0);
+	(void)env;
+//	if (p->pos.y > env->cam.pos.y)
+//		n = vec(0, 1, 0);
+//	if (p->pos.y < env->cam.pos.y)
+		n = vec(0, -1, 0);
 	n = rotate_x(n, rot.x);
 	n = rotate_z(n, rot.z);
 	n = rotate_y(n, rot.y);
@@ -28,7 +32,7 @@ void	init_scene(t_env *env)
 	env->win_x = WIN_X;
 	env->win_y = WIN_Y;
 
-	env->cam.pos = vec(0, 100, 2000);
+	env->cam.pos = vec(-50, 200, 3000);
 	env->cam.rot = vec(0, 0, 0);
 	env->cam.fov = 30;
 
@@ -36,69 +40,69 @@ void	init_scene(t_env *env)
 	env->num_light = 1;
 	if (!(env->lights = (t_light *)malloc(env->num_light * sizeof(t_light))))
 		exit(-1);
-	env->lights[0].pos = vec(0, 300, 200); 
+	env->lights[0].pos = vec(200, 80, 1000); 
 	env->lights[0].col = color(1, 1, 1); 
 
-	env->num_obj = 4;
+	env->num_obj = 8;
 	if (!(env->objs = (t_obj *)malloc(env->num_obj * sizeof(t_obj))))
 		exit(-1);
 	env->objs[0].type = 0; 
-	env->objs[0].pos = vec(500, -100, 0);
+	env->objs[0].pos = vec(0, -100, 0);
 	env->objs[0].rad = 0;
-	get_plane_n(&env->objs[0], vec(deg2rad(0), deg2rad(0), deg2rad(0)));
-	env->objs[0].col = color(1, 0, 0); 
+	get_plane_n(env, &env->objs[0], vec(deg2rad(0), deg2rad(0), deg2rad(0)));
+	env->objs[0].col = color(1, 0.2, 0.2); 
 	env->objs[0].reflect = 0;
 
-	env->objs[1].type = 4; 
-	env->objs[1].pos = vec(150, 30, 0);
+	env->objs[1].type = 1; 
+	env->objs[1].pos = vec(150, 30, 100);
 	env->objs[1].rad = 50;
 	env->objs[1].rot = vec(0, 0, 0);
 	env->objs[1].col = color(0, 1, 1); 
 	env->objs[1].reflect = 0.2;
 	
 	env->objs[2].type = 2; 
-	env->objs[2].pos = vec(-100, -50, 0);
+	env->objs[2].pos = vec(-60, 200, 400);
 	env->objs[2].rad = 60;
 	env->objs[2].rot = vec(0, 0, 0);
 	env->objs[2].col = color(1, 0, 1); 
 	env->objs[2].reflect = 0;
 	
-	env->objs[3].type = 4; 
-	env->objs[3].pos = vec(-300, 0, 0);
-	env->objs[3].rad = deg2rad(30);
+	env->objs[3].type = 3; 
+	env->objs[3].pos = vec(-300, 80, 0);
+	env->objs[3].rad = deg2rad(60);
 	env->objs[3].rot = vec(0, 0, 0);
-	get_plane_n(&env->objs[3], vec(deg2rad(0), deg2rad(0), deg2rad(0)));
+	get_plane_n(env, &env->objs[3], vec(deg2rad(0), deg2rad(0), deg2rad(0)));
 	env->objs[3].col = color(1, 1, 0); 
 	env->objs[3].reflect = 0;
-/*
+
 	env->objs[4].type = 1; 
-	env->objs[4].pos = vec(300, 80, 300);
-	env->objs[4].rad = 10;
+	env->objs[4].pos = vec(500, 80, 400);
+	env->objs[4].rad = 20;
 	env->objs[4].rot = vec(0, 0, 0);
 	env->objs[4].col = color(1, 1, 1); 
 	env->objs[4].reflect = 0;
 	
-	env->objs[4].type = 0; 
-	env->objs[4].pos = vec(0, -300, 0);
-	env->objs[4].rad = 0.1;
-	get_plane_n(&env->objs[4], vec(deg2rad(0), deg2rad(0), deg2rad(0)));
-	env->objs[4].col = color(1, 1, 1); 
-	env->objs[4].reflect = 0;
-	
 	env->objs[5].type = 0; 
-	env->objs[5].pos = vec(-500, 0, 0);
-	env->objs[5].rad = 100;
-	get_plane_n(&env->objs[5], vec(deg2rad(0), deg2rad(0), deg2rad(-90)));
-	env->objs[5].col = color(0.5, 0.5, 1); 
+	env->objs[5].pos = vec(-800, 0, 0);
+	env->objs[5].rad = 0;
+	get_plane_n(env, &env->objs[5], vec(deg2rad(0), deg2rad(0), deg2rad(-90)));
+	env->objs[5].col = color(0.5, 1, 0.5); 
 	env->objs[5].reflect = 0;
 	
 	env->objs[6].type = 0; 
-	env->objs[6].pos = vec(700, 0, 0);
+	env->objs[6].pos = vec(800, 0, 0);
 	env->objs[6].rad = 0;
-	env->objs[6].rot = vec(deg2rad(0), deg2rad(0), deg2rad(-90));
-	env->objs[6].col = color(0.5, 1, 0.5); 
+	get_plane_n(env, &env->objs[6], vec(deg2rad(0), deg2rad(0), deg2rad(90)));
+	env->objs[6].col = color(0.3, 0.3, 1); 
 	env->objs[6].reflect = 0;
-*/
+
+	env->objs[7].type = 4; 
+	env->objs[7].pos = vec(0, 800, 0);
+	env->objs[7].rad = 0;
+	get_plane_n(env, &env->objs[7], vec(deg2rad(0), deg2rad(0), deg2rad(180)));
+	env->objs[7].col = color(1, 1, 1); 
+	env->objs[7].reflect = 0;
+
 }
 
 int		window_init(t_mlx *mlx, int win_x, int win_y)
