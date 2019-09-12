@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/20 14:54:31 by evogel            #+#    #+#             */
-/*   Updated: 2019/09/05 15:17:49 by evogel           ###   ########.fr       */
+/*   Updated: 2019/09/12 18:29:11 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,7 @@ int        cylinder_intersect(t_ray *r, t_obj *s, float *t)
 	/* https://mrl.nyu.edu/~dzorin/rend05/lecture2.pdf page 2
 http://woo4.me/wootracer/cylinder-intersection/ */
 
-
 	t_vec p0 = sub_vec(r->ori, s->pos);
-//	p0 = rotate_z(p0, M_PI * 0.5);
 
 	A = (r->dir.x * r->dir.x) + (r->dir.z * r->dir.z);
 	B = 2 * (r->dir.x * p0.x) + 2 * (r->dir.z * p0.z);
@@ -56,16 +54,16 @@ http://woo4.me/wootracer/cylinder-intersection/ */
 int		sphere_intersect(t_ray *r, t_obj *s, float *t)
 {
 
-	/* A = d.d, the vector dot product of the direction */
-	float A; 
-	A = dot(r->dir, r->dir); 
-
 	/* We need a vector representing the distance between the ori of 
 	 * the ray and the position of the circle.
 	 * This is the term (p0 - c) 
 	 */
 	t_vec dist;
 	dist = sub_vec(r->ori, s->pos);
+
+	/* A = d.d, the vector dot product of the direction */
+	float A; 
+	A = dot(r->dir, r->dir); 
 
 	/* 2d.(p0 - c) */  
 	float B;
@@ -149,11 +147,12 @@ int cone_intersect(t_ray *r, t_obj *s, float *t)
 	float angle;
 	angle = 1 - (s->rad / M_PI);
 
+    t_vec p0;
+    p0 = sub_vec(r->ori, s->pos);
+
     /* A = d.d, the vector dot product of the direction */
     float A;
     A = dot(r->dir, s->rot) * dot(r->dir, s->rot) - angle * angle;
-    t_vec p0;
-    p0 = sub_vec(r->ori, s->pos);
     
     /* 2d.(p0 - c) */
     float B;
