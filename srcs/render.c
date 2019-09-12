@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 16:37:45 by evogel            #+#    #+#             */
-/*   Updated: 2019/09/09 18:49:05 by evogel           ###   ########.fr       */
+/*   Updated: 2019/09/12 17:42:05 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,10 @@ t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
 	else if (obj->type == 1)
 		n_hit = normalize(sub_vec(p_hit, obj->pos));
 	else if (obj->type == 2)
+	{
 		n_hit = normalize(sub_vec(p_hit, vec(obj->pos.x, p_hit.y, obj->pos.z)));
+		n_hit = add_vec(n_hit, obj->rot);
+	}
 	else if (obj->type == 3)
 		n_hit = normalize(vec((p_hit.x - obj->pos.x) / obj->rad, obj->rad, (p_hit.z - obj->pos.z) / obj->rad));
 	return (n_hit);
@@ -72,7 +75,7 @@ int		cast_ray(t_env *env, t_ray *ray)
 	while (j < env->num_light)
 	{
 		t_ray light_ray;
-		light_ray.ori = add_vec(p_hit, scale(0.05f, n_hit)); //0.05f is the shadow bias to compensate for precision errors
+		light_ray.ori = add_vec(p_hit, scale(0.2f, n_hit)); //0.05f is the shadow bias to compensate for precision errors
 		light_ray.dir = normalize(sub_vec(env->lights[j].pos, p_hit));
 		
 		t_obj *shadow_obj;
@@ -142,6 +145,9 @@ int		render(t_env *env)
 			ray.ori = env->cam.pos;
 			//HERE ADD ROTATION vector to xx yy and -1
 			ray.dir = normalize(vec(xx, yy, -1));
+			ray.dir = rotate_x(ray.dir, env->cam.rot.x);
+			ray.dir = rotate_z(ray.dir, env->cam.rot.z);
+			ray.dir = rotate_y(ray.dir, env->cam.rot.y);
 			env->mlx.data[x + y * env->win_x] = cast_ray(env, &ray);
 			++x;
 		}
