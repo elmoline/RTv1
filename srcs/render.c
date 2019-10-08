@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 16:37:45 by evogel            #+#    #+#             */
-/*   Updated: 2019/09/12 17:42:05 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/08 16:40:58 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ t_obj	*get_obj_intersect(t_ray *ray, t_env *env, float *t)
 t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
 {
 	t_vec n_hit;
+	t_vec tmp;
 
 	n_hit = vec(0, 0, 0);
 	if (obj->type == 0)
@@ -47,11 +48,22 @@ t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
 		n_hit = normalize(sub_vec(p_hit, obj->pos));
 	else if (obj->type == 2)
 	{
-		n_hit = normalize(sub_vec(p_hit, vec(obj->pos.x, p_hit.y, obj->pos.z)));
-		n_hit = add_vec(n_hit, obj->rot);
+		//if (magnitude(obj->rot) != 0)
+		//{
+			tmp = obj->pos;
+			tmp = rotate_full(tmp, obj->rot);
+		//}
+		n_hit = normalize(sub_vec(p_hit, vec(tmp.x, p_hit.y, tmp.z)));
 	}
 	else if (obj->type == 3)
-		n_hit = normalize(vec((p_hit.x - obj->pos.x) / obj->rad, obj->rad, (p_hit.z - obj->pos.z) / obj->rad));
+	{
+		//if (magnitude(obj->rot) != 0)
+		//{
+			tmp = obj->pos;
+			tmp = rotate_full(tmp, obj->rot);
+		//}
+		n_hit = normalize(vec((p_hit.x - tmp.x) / obj->rad, obj->rad, (p_hit.z - tmp.z) / obj->rad));
+	}
 	return (n_hit);
 }
 
@@ -66,8 +78,16 @@ int		cast_ray(t_env *env, t_ray *ray)
 		return (0);
 	col = color(0, 0, 0);
 
+	t_vec temp = ray->dir;
+	t_vec temp2 = ray->ori;
+	if (curr_obj->type >= 2 && magnitude(curr_obj->rot) != 0)
+	{
+		temp = rotate_full(temp, curr_obj->rot);
+		temp2 = rotate_full(temp2, curr_obj->rot);
+	}
+
 	t_vec p_hit;
-	p_hit = add_vec(ray->ori, scale(t, ray->dir));
+	p_hit = add_vec(temp2, scale(t, temp));
 
 	t_vec n_hit;
 	n_hit = get_hit_point_normal(p_hit, curr_obj);
@@ -95,6 +115,10 @@ int		cast_ray(t_env *env, t_ray *ray)
 			col.red += (diff * shade * env->lights[j].col.red + env->ambient) * curr_obj->col.red;
 			col.green += (diff * shade * env->lights[j].col.green + env->ambient) * curr_obj->col.green;
 			col.blue += (diff * shade * env->lights[j].col.blue + env->ambient) * curr_obj->col.blue;
+			if (shade >= 0.95)
+			{
+				col = color(1, 1, 1);
+			}
 		}
 		++j;
 	}
@@ -145,9 +169,7 @@ int		render(t_env *env)
 			ray.ori = env->cam.pos;
 			//HERE ADD ROTATION vector to xx yy and -1
 			ray.dir = normalize(vec(xx, yy, -1));
-			ray.dir = rotate_x(ray.dir, env->cam.rot.x);
-			ray.dir = rotate_z(ray.dir, env->cam.rot.z);
-			ray.dir = rotate_y(ray.dir, env->cam.rot.y);
+			ray.dir = rotate_full(ray.dir, env->cam.rot);
 			env->mlx.data[x + y * env->win_x] = cast_ray(env, &ray);
 			++x;
 		}

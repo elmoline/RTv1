@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 16:51:38 by evogel            #+#    #+#             */
-/*   Updated: 2019/09/02 17:07:59 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/08 16:10:12 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,11 @@ t_vec add_vec(t_vec v1, t_vec v2)
 	return (res);
 }
 
+float magnitude(t_vec v)
+{
+	return (sqrt(dot(v, v)));
+}
+
 /* Normalize a vector */
 t_vec normalize(t_vec v)
 {
@@ -94,7 +99,7 @@ t_vec normalize(t_vec v)
 	float	mag;
 	
 	res = v;
-	mag = sqrtf(dot(v, v));
+	mag = magnitude(v);
 	if (mag > 0)
 		res = scale(1 / mag, v);
 	return (res);
@@ -142,6 +147,18 @@ t_vec	rotate_z(t_vec pt, double theta)
 	ret.row3 = vec4(0, 0, 0, 1);
 	return (mul_vec_mat(pt, ret));
 }
+
+t_vec	rotate_full(t_vec ori, t_vec rot)
+{
+	t_vec res;
+
+	res = ori;
+	res = rotate_z(res, rot.z);
+	res = rotate_x(res, rot.x);
+	res = rotate_y(res, rot.y);
+	return (res);
+}
+
 
 int			deal_key(int key, void *param)
 {
