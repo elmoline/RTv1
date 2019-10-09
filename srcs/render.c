@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 16:37:45 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/08 16:40:58 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/09 17:51:53 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,21 +48,16 @@ t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
 		n_hit = normalize(sub_vec(p_hit, obj->pos));
 	else if (obj->type == 2)
 	{
-		//if (magnitude(obj->rot) != 0)
-		//{
-			tmp = obj->pos;
-			tmp = rotate_full(tmp, obj->rot);
-		//}
+		tmp = obj->pos;
+		tmp = rotate_full(tmp, obj->rot);
 		n_hit = normalize(sub_vec(p_hit, vec(tmp.x, p_hit.y, tmp.z)));
 	}
 	else if (obj->type == 3)
 	{
-		//if (magnitude(obj->rot) != 0)
-		//{
-			tmp = obj->pos;
-			tmp = rotate_full(tmp, obj->rot);
-		//}
-		n_hit = normalize(vec((p_hit.x - tmp.x) / obj->rad, obj->rad, (p_hit.z - tmp.z) / obj->rad));
+		t_vec cp = sub_vec(p_hit, obj->pos);
+		if (dot(obj->rot, cp) < 0.0f)
+			obj->rot = scale(-1, obj->rot);
+		n_hit = normalize(sub_vec(scale(dot(obj->rot, cp) / dot(cp, cp), cp), obj->rot));
 	}
 	return (n_hit);
 }
@@ -80,7 +75,7 @@ int		cast_ray(t_env *env, t_ray *ray)
 
 	t_vec temp = ray->dir;
 	t_vec temp2 = ray->ori;
-	if (curr_obj->type >= 2 && magnitude(curr_obj->rot) != 0)
+	if (curr_obj->type == 2)
 	{
 		temp = rotate_full(temp, curr_obj->rot);
 		temp2 = rotate_full(temp2, curr_obj->rot);
@@ -95,9 +90,10 @@ int		cast_ray(t_env *env, t_ray *ray)
 	while (j < env->num_light)
 	{
 		t_ray light_ray;
-		light_ray.ori = add_vec(p_hit, scale(0.2f, n_hit)); //0.05f is the shadow bias to compensate for precision errors
+		light_ray.ori = add_vec(p_hit, scale(0.05f, n_hit));
 		light_ray.dir = normalize(sub_vec(env->lights[j].pos, p_hit));
 		
+		t = 1000000000000000.0f;
 		t_obj *shadow_obj;
 		shadow_obj = get_obj_intersect(&light_ray, env, &t);
 
@@ -105,7 +101,7 @@ int		cast_ray(t_env *env, t_ray *ray)
 		d1 = sqrt(dot(sub_vec(env->lights[j].pos, p_hit), sub_vec(env->lights[j].pos, p_hit)));
 		d2 = sqrt(dot(scale(t, light_ray.dir), scale(t, light_ray.dir)));
 
-		if (shadow_obj == NULL || d2 > d1)
+		if (shadow_obj == NULL || shadow_obj == curr_obj || d2 > d1)
 		{
 			float shade;
 			shade = dot(n_hit, light_ray.dir);
@@ -115,10 +111,12 @@ int		cast_ray(t_env *env, t_ray *ray)
 			col.red += (diff * shade * env->lights[j].col.red + env->ambient) * curr_obj->col.red;
 			col.green += (diff * shade * env->lights[j].col.green + env->ambient) * curr_obj->col.green;
 			col.blue += (diff * shade * env->lights[j].col.blue + env->ambient) * curr_obj->col.blue;
-			if (shade >= 0.95)
-			{
-				col = color(1, 1, 1);
-			}
+		}
+		else
+		{
+			col.red += env->ambient * curr_obj->col.red;
+			col.green += env->ambient * curr_obj->col.green;
+			col.blue += env->ambient * curr_obj->col.blue;
 		}
 		++j;
 	}

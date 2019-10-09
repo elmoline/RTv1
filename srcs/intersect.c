@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/20 14:54:31 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/08 16:11:03 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/09 15:40:26 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,21 +155,21 @@ int cone_intersect(t_ray *r, t_obj *s, float *t)
 
     t_vec p0;
     p0 = sub_vec(r->ori, s->pos);
-
+/*
 	t_vec rot = vec(0, -1, 0);
 	rot = rotate_full(rot, s->rot);
-
+*/
     /* A = d.d, the vector dot product of the direction */
     float A;
-    A = dot(r->dir, rot) * dot(r->dir, rot) - angle * angle;
+    A = dot(r->dir, s->rot) * dot(r->dir, s->rot) - angle * angle;
     
     /* 2d.(p0 - c) */
     float B;
-    B = 2 * ((dot(r->dir, rot) * dot(p0, rot)) - dot(r->dir, p0) * angle * angle);
+    B = 2 * ((dot(r->dir, s->rot) * dot(p0, s->rot)) - dot(r->dir, p0) * angle * angle);
     
     /* (p0 - c).(p0 - c) - r^2 */
     float C;
-    C = dot(p0, rot) * dot(p0, rot) - dot(p0, p0) * angle * angle;
+    C = dot(p0, s->rot) * dot(p0, s->rot) - dot(p0, p0) * angle * angle;
     
     /* Solving the discriminant */
     float discr;
