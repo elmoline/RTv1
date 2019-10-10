@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 16:37:45 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/09 17:51:53 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/10 16:43:39 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ t_obj	*get_obj_intersect(t_ray *ray, t_env *env, float *t)
 t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
 {
 	t_vec n_hit;
-	t_vec tmp;
 
 	n_hit = vec(0, 0, 0);
 	if (obj->type == 0)
@@ -47,11 +46,7 @@ t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
 	else if (obj->type == 1)
 		n_hit = normalize(sub_vec(p_hit, obj->pos));
 	else if (obj->type == 2)
-	{
-		tmp = obj->pos;
-		tmp = rotate_full(tmp, obj->rot);
-		n_hit = normalize(sub_vec(p_hit, vec(tmp.x, p_hit.y, tmp.z)));
-	}
+		n_hit = normalize(cross(cross(obj->rot, sub_vec(p_hit, obj->pos)), obj->rot));
 	else if (obj->type == 3)
 	{
 		t_vec cp = sub_vec(p_hit, obj->pos);
@@ -64,7 +59,7 @@ t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
 
 int		cast_ray(t_env *env, t_ray *ray)
 {
-	float t = 1000000000000000.0f; //view limit
+	float t = 1000000000000000.0f;
 	int j = 0;
 	t_col col;
 	t_obj *curr_obj;
@@ -73,16 +68,8 @@ int		cast_ray(t_env *env, t_ray *ray)
 		return (0);
 	col = color(0, 0, 0);
 
-	t_vec temp = ray->dir;
-	t_vec temp2 = ray->ori;
-	if (curr_obj->type == 2)
-	{
-		temp = rotate_full(temp, curr_obj->rot);
-		temp2 = rotate_full(temp2, curr_obj->rot);
-	}
-
 	t_vec p_hit;
-	p_hit = add_vec(temp2, scale(t, temp));
+	p_hit = add_vec(ray->ori, scale(t, ray->dir));
 
 	t_vec n_hit;
 	n_hit = get_hit_point_normal(p_hit, curr_obj);
@@ -165,7 +152,6 @@ int		render(t_env *env)
 		{
 			xx = (2 * ((x + 0.5) * inv_width) - 1) * angle * aspectratio;
 			ray.ori = env->cam.pos;
-			//HERE ADD ROTATION vector to xx yy and -1
 			ray.dir = normalize(vec(xx, yy, -1));
 			ray.dir = rotate_full(ray.dir, env->cam.rot);
 			env->mlx.data[x + y * env->win_x] = cast_ray(env, &ray);

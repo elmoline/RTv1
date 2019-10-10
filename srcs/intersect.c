@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/20 14:54:31 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/09 15:40:26 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/10 16:14:25 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,14 @@ int        cylinder_intersect(t_ray *r, t_obj *s, float *t)
 	float    C;
 	float    discr;
 
-	/* https://mrl.nyu.edu/~dzorin/rend05/lecture2.pdf page 2
-http://woo4.me/wootracer/cylinder-intersection/ */
+	//https://stackoverflow.com/questions/37766393/ray-tracing-cylinder-degenerates-when-rotated
 
-	t_vec temp;
-	temp = r->dir;
-	r->dir = rotate_full(r->dir, s->rot);
+	t_vec cross1 = cross(sub_vec(r->ori, s->pos), s->rot);
+	t_vec cross2 = cross(r->dir, s->rot);
 
-	t_vec p0 = sub_vec(r->ori, s->pos);
-	p0 = rotate_full(p0, s->rot);
-
-	A = (r->dir.x * r->dir.x) + (r->dir.z * r->dir.z);
-	B = 2 * (r->dir.x * p0.x) + 2 * (r->dir.z * p0.z);
-	C = (p0.x * p0.x) + (p0.z * p0.z) - (s->rad * s->rad);
-
-	r->dir = temp;
+	A = dot(cross2, cross2);
+	B = 2 * dot(cross2, cross1);
+	C = dot(cross1, cross1) - (s->rad * s->rad * dot(s->rot, s->rot));
 
 	discr = B * B - 4 * A * C;
 	if (discr >= 0)
@@ -147,6 +140,7 @@ int cone_intersect(t_ray *r, t_obj *s, float *t)
 {
     float    epsilon;
     int        ret;
+
     ret = 0;
     epsilon = 0.00001f;
 
@@ -155,10 +149,7 @@ int cone_intersect(t_ray *r, t_obj *s, float *t)
 
     t_vec p0;
     p0 = sub_vec(r->ori, s->pos);
-/*
-	t_vec rot = vec(0, -1, 0);
-	rot = rotate_full(rot, s->rot);
-*/
+
     /* A = d.d, the vector dot product of the direction */
     float A;
     A = dot(r->dir, s->rot) * dot(r->dir, s->rot) - angle * angle;

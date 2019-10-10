@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/08 16:10:18 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/10 15:16:57 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ t_vec	vec(float x, float y, float z);
 t_col	color(float red, float green, float blue);
 t_vec	sub_vec(t_vec v1, t_vec v2);
 float	dot(t_vec v1, t_vec v2);
+t_vec 	cross(t_vec v1, t_vec v2);
 t_vec	scale(float c, t_vec v);
 t_vec	add_vec(t_vec v1, t_vec v2);
 t_vec	normalize(t_vec v);

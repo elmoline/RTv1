@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 16:51:38 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/08 16:10:12 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/10 16:01:19 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,16 @@ t_vec sub_vec(t_vec v1, t_vec v2)
 float dot(t_vec v1, t_vec v2)
 {
 	return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
+}
+
+t_vec cross(t_vec v1, t_vec v2)
+{
+    t_vec res;
+	
+	res.x = v1.y * v2.z - v1.z * v2.y;
+	res.y = v1.z * v2.x - v1.x * v2.z;
+	res.z = v1.x * v2.y - v1.y * v2.x;
+	return (res);
 }
 
 /* Calculate Vector x Scalar and return resulting Vector*/ 

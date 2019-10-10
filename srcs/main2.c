@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/09 17:50:53 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/10 16:41:55 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	init_scene(t_env *env)
 	env->win_x = WIN_X;
 	env->win_y = WIN_Y;
 
-	env->cam.pos = vec(0, 600, 4000);
+	env->cam.pos = vec(100, 600, 4000);
 	env->cam.rot = vec(deg2rad(0), deg2rad(0), deg2rad(0));
 	env->cam.fov = 30;
 
@@ -35,12 +35,8 @@ void	init_scene(t_env *env)
 	if (!(env->lights = (t_light *)malloc(env->num_light * sizeof(t_light))))
 		exit(-1);
 
-	env->lights[0].pos = vec(400, 300, 600); 
+	env->lights[0].pos = vec(400, 700, 1000); 
 	env->lights[0].col = color(1, 1, 1); 
-//	env->lights[1].pos = vec(-400, 500, 800); 
-//	env->lights[1].col = color(0.8, 0.8, 0.2); 
-//	env->lights[2].pos = vec(200, 80, -1000); 
-//	env->lights[2].col = color(1, 1, 1); 
 
 	env->num_obj = 4;
 	if (!(env->objs = (t_obj *)malloc(env->num_obj * sizeof(t_obj))))
@@ -61,16 +57,16 @@ void	init_scene(t_env *env)
 	env->objs[1].reflect = 0;
 	
 	env->objs[2].type = 3; 
-	env->objs[2].pos = vec(-100, 300, 150);
+	env->objs[2].pos = vec(-200, 400, 150);
 	env->objs[2].rad = deg2rad(10);
-	get_plane_n(&env->objs[2], vec(deg2rad(10), deg2rad(0), deg2rad(160)));
+	get_plane_n(&env->objs[2], vec(deg2rad(0), deg2rad(0), deg2rad(20)));
 	env->objs[2].col = color(1, 1, 0); 
 	env->objs[2].reflect = 0;
 	
 	env->objs[3].type = 2; 
-	env->objs[3].pos = vec(300, 400, 400);
+	env->objs[3].pos = vec(-100, 0, 400);
 	env->objs[3].rad = 60;
-	env->objs[3].rot = vec(deg2rad(0), deg2rad(0), deg2rad(0));
+	get_plane_n(&env->objs[3], vec(deg2rad(50), deg2rad(80), deg2rad(0)));
 	env->objs[3].col = color(1, 0, 1); 
 	env->objs[3].reflect = 0;
 /*
