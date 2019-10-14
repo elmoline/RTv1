@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 16:51:38 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/10 16:01:19 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/14 17:30:27 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ t_col	color(float red, float green, float blue)
         return (res);
 }
 
-/* Subtract two vectors and return the resulting vector */
 t_vec sub_vec(t_vec v1, t_vec v2)
 {
 	t_vec res;
@@ -59,7 +58,6 @@ t_vec sub_vec(t_vec v1, t_vec v2)
 	return (res);
 }
 
-/* Multiply two vectors and return the resulting scalar (dot product) */
 float dot(t_vec v1, t_vec v2)
 {
 	return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
@@ -75,7 +73,6 @@ t_vec cross(t_vec v1, t_vec v2)
 	return (res);
 }
 
-/* Calculate Vector x Scalar and return resulting Vector*/ 
 t_vec scale(float c, t_vec v)
 {
     t_vec res;
@@ -86,7 +83,6 @@ t_vec scale(float c, t_vec v)
 	return (res);
 }
 
-/* Add two vectors and return the resulting vector */
 t_vec add_vec(t_vec v1, t_vec v2)
 {
     t_vec res;
@@ -102,7 +98,6 @@ float magnitude(t_vec v)
 	return (sqrt(dot(v, v)));
 }
 
-/* Normalize a vector */
 t_vec normalize(t_vec v)
 {
     t_vec	res;
