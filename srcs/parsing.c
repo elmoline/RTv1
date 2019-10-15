@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 16:25:18 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/15 16:43:35 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/10/15 17:30:56 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,8 @@ static void		read_objects(char *line, t_env *env, int num_line)
 	freeshit(word);
 
 	word = ft_strsplit(split_line[4], ','); //col
-	env->objs[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2])); 
+	env->objs[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
+	env->objs[num_line].col = color(env->objs[num_line].col.r / 100, env->objs[num_line].col.g / 100, env->objs[num_line].col.b / 100);
 	freeshit(word);
 
 	env->objs[num_line].reflect = ft_atoi(split_line[5]);
@@ -89,6 +90,7 @@ static void		read_lights(char *line, t_env *env, int num_line)
 
 	word = ft_strsplit(split_line[1], ',');
 	env->lights[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
+	env->lights[num_line].col = color(env->lights[num_line].col.r / 100, env->lights[num_line].col.g / 100, env->lights[num_line].col.b / 100);
 	freeshit(word);
 
 	freeshit(split_line);

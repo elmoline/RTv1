@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/15 14:29:41 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/15 16:59:50 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,9 @@ t_vec			rotate_x(t_vec pt, double theta);
 t_vec			rotate_y(t_vec pt, double theta);
 t_vec			rotate_z(t_vec pt, double theta);
 t_vec			rotate_full(t_vec ori, t_vec rot);
+
+int				parsing(int ac, char **av, t_env *env);
+t_vec			get_axe(t_vec rot);
 
 int				render(t_env *env);
 int				cast_ray(t_env *env, t_ray *ray);

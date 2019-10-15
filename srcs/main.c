@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/15 16:56:50 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/15 17:37:53 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 t_vec		get_axe(t_vec rot)
 {
 	t_vec axe;
-
+	
+	rot.x = deg2rad(rot.x);
+	rot.y = deg2rad(rot.y);
+	rot.z = deg2rad(rot.z);
 	axe = vec(0, -1, 0);
 	axe = rotate_full(axe, rot);
 	return (normalize(axe));
