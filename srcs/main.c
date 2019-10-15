@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main2.c                                            :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/15 14:27:24 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/15 16:56:50 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-static t_vec	get_axe(t_vec rot)
+t_vec		get_axe(t_vec rot)
 {
 	t_vec axe;
 
@@ -98,8 +98,13 @@ int				main(int ac, char **av)
 
 	if (ac != 2)
 		return (ft_printf("usage:\n"));
-	(void)av;
-	init_scene(&env);
+	//PARSING GOES HERE
+	//following is temp
+	// (void)av;
+	// init_scene(&env);
+	parsing(ac, av, &env);
+	//create error1() for parsing errors
+	//end temp
 	if (window_init(&env.mlx, env.win_x, env.win_y) == -1)
 		error2();
 	render(&env);
