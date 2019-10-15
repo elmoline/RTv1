@@ -6,7 +6,7 @@
 #    By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 16:47:44 by evogel            #+#    #+#              #
-#    Updated: 2019/10/14 17:47:21 by evogel           ###   ########.fr        #
+#    Updated: 2019/10/15 14:49:01 by wael-mos         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ SRCS = main.c \
 	   write_ppm.c \
 	   render.c \
 	   cast_ray.c \
-	   intersect.c
+	   intersect.c \
+	   parsing.c
 
 OBJS = $(SRCS:.c=.o)
 
