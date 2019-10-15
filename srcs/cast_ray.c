@@ -6,7 +6,7 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 17:45:00 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/14 17:46:24 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/15 16:52:31 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,63 +62,54 @@ t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
 	return (n_hit);
 }
 
+float	light_ray(t_env *env, t_light *light, t_vec p_hit, t_obj *obj)
+{
+	t_vec	n_hit;
+	t_ray	light_ray;
+	t_obj	*shadow_obj;
+	float	t0;
+	float	t1;
+
+	t0 = 1000000000000000.0f;
+	n_hit = get_hit_point_normal(p_hit, obj);
+	light_ray.ori = add_vec(p_hit, scale(0.05f, n_hit));
+	light_ray.dir = normalize(sub_vec(light->pos, p_hit));
+	shadow_obj = get_obj_intersect(&light_ray, env, &t0);
+	t0 = magnitude(scale(t0, light_ray.dir));
+	t1 = magnitude(sub_vec(light->pos, p_hit));
+	if (shadow_obj == NULL || shadow_obj == obj || t0 > t1)
+	{
+		t0 = dot(n_hit, light_ray.dir);
+		return (t0 < 0.0f ? 0.0f : t0);
+	}
+	return (0.0f);
+}
+
 int		cast_ray(t_env *env, t_ray *ray)
 {
-	float	t;
 	int		j;
+	float	t;
 	t_col	col;
 	t_obj	*curr_obj;
+	t_vec	p_hit;
 
 	t = 1000000000000.0f;
 	if (!(curr_obj = get_obj_intersect(ray, env, &t)))
 		return (0);
 	col = color(0, 0, 0);
-
-	t_vec p_hit;
 	p_hit = add_vec(ray->ori, scale(t, ray->dir));
-
-	t_vec n_hit;
-	n_hit = get_hit_point_normal(p_hit, curr_obj);
-
 	j = 0;
 	while (j < env->num_light)
 	{
-		t_ray light_ray;
-		light_ray.ori = add_vec(p_hit, scale(0.05f, n_hit));
-		light_ray.dir = normalize(sub_vec(env->lights[j].pos, p_hit));
-		
-		t = 1000000000000000.0f;
-		t_obj *shadow_obj;
-		shadow_obj = get_obj_intersect(&light_ray, env, &t);
-
-		float d1, d2;
-		d1 = sqrt(dot(sub_vec(env->lights[j].pos, p_hit), sub_vec(env->lights[j].pos, p_hit)));
-		d2 = sqrt(dot(scale(t, light_ray.dir), scale(t, light_ray.dir)));
-
-		if (shadow_obj == NULL || shadow_obj == curr_obj || d2 > d1)
-		{
-			float shade;
-			shade = dot(n_hit, light_ray.dir);
-			if (shade < 0.0f)
-				shade = 0.0f;
-			float diff = 1 - env->ambient;
-			col.red += (diff * shade * env->lights[j].col.red + env->ambient) * curr_obj->col.red;
-			col.green += (diff * shade * env->lights[j].col.green + env->ambient) * curr_obj->col.green;
-			col.blue += (diff * shade * env->lights[j].col.blue + env->ambient) * curr_obj->col.blue;
-		}
-		else
-		{
-			col.red += env->ambient * curr_obj->col.red;
-			col.green += env->ambient * curr_obj->col.green;
-			col.blue += env->ambient * curr_obj->col.blue;
-		}
+		t = light_ray(env, &env->lights[j], p_hit, curr_obj);
+		t *= 1 - env->ambient;
+		col.r += (env->ambient + t * env->lights[j].col.r) * curr_obj->col.r;
+		col.g += (env->ambient + t * env->lights[j].col.g) * curr_obj->col.g;
+		col.b += (env->ambient + t * env->lights[j].col.b) * curr_obj->col.b;
 		++j;
 	}
-	col.red *= 255.0f;
-	col.red = (col.red > 255.0f ? 255.0f : col.red);
-	col.green *= 255.0f;
-	col.green = (col.green > 255.0f ? 255.0f : col.green);
-	col.blue *= 255.0f;
-	col.blue = (col.blue > 255.0f ? 255.0f : col.blue);
-	return (((unsigned char)col.red << 16) | ((unsigned char)col.green << 8) | ((unsigned char)col.blue));
+	col.r = (col.r * 255.0f > 255.0f ? 255.0f : col.r * 255.0f);
+	col.g = (col.g * 255.0f > 255.0f ? 255.0f : col.g * 255.0f);
+	col.b = (col.b * 255.0f > 255.0f ? 255.0f : col.b * 255.0f);
+	return (((uint8_t)col.r << 16) | ((uint8_t)col.g << 8) | ((uint8_t)col.b));
 }

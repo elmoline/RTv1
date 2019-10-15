@@ -6,7 +6,7 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/22 12:10:35 by evogel            #+#    #+#             */
-/*   Updated: 2019/09/02 17:13:13 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/15 14:21:35 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void		write_ppm(int key, t_env *env)
 	if (n == 100)
 		return (ft_putendl("Screenshot limit reached"));
 	data_fill_ppm(key, env);
-	mlx_string_put(env->mlx.mlx_ptr, env->mlx.win_ptr, 10, 10, 0xffffff, 
+	mlx_string_put(env->mlx.mlx_ptr, env->mlx.win_ptr, 10, 10, 0xffffff, \
 			"Screenshot successfully created");
 	ft_printf("%s was successfully created\n", filename);
 	free(filename);

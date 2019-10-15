@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/14 17:45:55 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/15 14:29:41 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,6 @@
 # define WIN_X	1080
 # define WIN_Y	720
 
-/*
-** The vector
-*/
 typedef struct	s_vec
 {
 	float		x;
@@ -31,22 +28,35 @@ typedef struct	s_vec
 	float		z;
 }				t_vec;
 
-/* The ray */
+typedef struct	s_vec4
+{
+	float		x;
+	float		y;
+	float		z;
+	float		w;
+}				t_vec4;
+
+typedef struct	s_matrix
+{
+	t_vec4		row0;
+	t_vec4		row1;
+	t_vec4		row2;
+	t_vec4		row3;
+}				t_matrix;
+
 typedef struct	s_ray
 {
 	t_vec		ori;
 	t_vec		dir;
 }				t_ray;
 
-/* Colour */
 typedef struct	s_col
 {
-	float		red;
-	float		green;
-	float		blue;
+	float		r;
+	float		g;
+	float		b;
 }				t_col;
 
-/* Camera */
 typedef struct	s_cam
 {
 	t_vec		pos;
@@ -54,14 +64,15 @@ typedef struct	s_cam
 	float		fov;
 }				t_cam;
 
-/* Light */
 typedef struct	s_light
 {
 	t_vec		pos;
 	t_col		col;
 }				t_light;
 
-/* The objects | 0:plane, 1:sphere, 2:cylinder, 3:cone */
+/*
+** The objects : 0=plane, 1=sphere, 2=cylinder, 3=cone
+*/
 typedef struct	s_obj
 {
 	uint8_t		type;
@@ -72,7 +83,6 @@ typedef struct	s_obj
 	float		reflect;
 }				t_obj;
 
-/* MLX info */
 typedef struct	s_mlx
 {
 	void		*mlx_ptr;
@@ -95,32 +105,22 @@ typedef struct	s_env
 	float		ambient;
 }				t_env;
 
-typedef struct	s_vec4
-{
-	float		x;
-	float		y;
-	float		z;
-	float		w;
-}				t_vec4;
-
-typedef struct	s_matrix
-{
-	t_vec4		row0;
-	t_vec4		row1;
-	t_vec4		row2;
-	t_vec4		row3;
-}				t_matrix;
-
+float			deg2rad(int d);
 t_vec			vec(float x, float y, float z);
+t_vec4			vec4(float x, float y, float z, float w);
 t_col			color(float red, float green, float blue);
 t_vec			sub_vec(t_vec v1, t_vec v2);
 float			dot(t_vec v1, t_vec v2);
 t_vec			cross(t_vec v1, t_vec v2);
 t_vec			scale(float c, t_vec v);
 t_vec			add_vec(t_vec v1, t_vec v2);
-t_vec			normalize(t_vec v);
 float			magnitude(t_vec v);
-float			deg2rad(int d);
+t_vec			normalize(t_vec v);
+
+t_vec			rotate_x(t_vec pt, double theta);
+t_vec			rotate_y(t_vec pt, double theta);
+t_vec			rotate_z(t_vec pt, double theta);
+t_vec			rotate_full(t_vec ori, t_vec rot);
 
 int				render(t_env *env);
 int				cast_ray(t_env *env, t_ray *ray);
@@ -133,10 +133,5 @@ int				deal_key(int key, void *s);
 int				deal_close(void);
 void			write_ppm(int key, t_env *env);
 int				error2(void);
-
-t_vec			rotate_x(t_vec pt, double theta);
-t_vec			rotate_y(t_vec pt, double theta);
-t_vec			rotate_z(t_vec pt, double theta);
-t_vec			rotate_full(t_vec ori, t_vec rot);
 
 #endif
