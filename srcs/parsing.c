@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 16:25:18 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/17 14:12:32 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/17 15:45:57 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ static int		read_objects(char *line, t_env *env, int num_line)
 
 	word = ft_strsplit(split_line[2], ','); //col
 	env->objs[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
-	env->objs[num_line].col = color(env->objs[num_line].col.r / 100, env->objs[num_line].col.g / 100, env->objs[num_line].col.b / 100);
+	env->objs[num_line].col = color(env->objs[num_line].col.r / 100,\
+		env->objs[num_line].col.g / 100, env->objs[num_line].col.b / 100);
 	freeshit(word);
 
 	word = ft_strsplit(split_line[3], ','); //rot
@@ -105,7 +106,8 @@ static int		read_lights(char *line, t_env *env, int num_line)
 	freeshit(word);
 	word = ft_strsplit(split_line[1], ',');
 	env->lights[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
-	env->lights[num_line].col = color(env->lights[num_line].col.r / 100, env->lights[num_line].col.g / 100, env->lights[num_line].col.b / 100);
+	env->lights[num_line].col = color(env->lights[num_line].col.r / 100,\
+		env->lights[num_line].col.g / 100, env->lights[num_line].col.b / 100);
 	freeshit(word);
 	freeshit(split_line);
 	return (1);
@@ -165,8 +167,16 @@ static void		check_comma(char **split_line, int i, int size)
 static void		check_objs(char *line)
 {
 	char	**split_line;
+	int		count;
 	
-	split_line = ft_strsplit(line, '\t');
+	split_line = ft_strsplit(line, '\t'); // 0 to 4
+	count = 0;
+	while (count <= 4)
+	{
+		if (!split_line[count])
+			errormsg(1);
+		++count;
+	}
 	check_comma(split_line, 1, 3);
 	freeshit(split_line);
 }
@@ -174,8 +184,16 @@ static void		check_objs(char *line)
 static void		check_lights(char *line)
 {
 	char	**split_line;
+	int		count;
 
-	split_line = ft_strsplit(line, '\t');
+	split_line = ft_strsplit(line, '\t'); // 0 to 1
+	count = 0;
+	while (count <= 1)
+	{
+		if (!split_line[count])
+			errormsg(1);
+		++count;
+	}
 	check_comma(split_line, 0, 1);
 	freeshit(split_line);
 }
@@ -188,7 +206,14 @@ static void		check_env(char *line)
 
 	count = 0;
 	num_comma = 0;
-	split_line = ft_strsplit(line, '\t');
+	split_line = ft_strsplit(line, '\t'); // 0 to 6
+	while (count <= 6)
+	{
+		if (!split_line[count])
+			errormsg(1);
+		++count;
+	}
+	count = 0;
 	while (split_line[0][count])
 		if (split_line[0][count++] == ',')
 			++num_comma;
