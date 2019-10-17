@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 16:25:18 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/17 13:09:24 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/10/17 14:12:32 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,15 @@ static int		read_type(char	*word)
 	return (4);
 }
 
-static void		read_objects(char *line, t_env *env, int num_line)
+static int		read_objects(char *line, t_env *env, int num_line)
 {
 	char	**split_line;
 	char	**word;
 
 	if (!ft_isalpha(line[0]))
-		return ;
+		return (0);
+	if (num_line + 1 > env->num_obj)
+		errormsg(1);
 	split_line = ft_strsplit(line, '\t');
 	env->objs[num_line].type = read_type(split_line[0]);
 
@@ -85,15 +87,18 @@ static void		read_objects(char *line, t_env *env, int num_line)
 		env->objs[num_line].rad = ft_atoi(split_line[4]);
 
 	freeshit(split_line);
+	return (1);
 }
 
-static void		read_lights(char *line, t_env *env, int num_line)
+static int		read_lights(char *line, t_env *env, int num_line)
 {
 	char	**split_line;
 	char	**word;
 
 	if (!ft_isdigit(line[0]) && line[0] != '-')
-		return ;
+		return (0);
+	if (num_line + 1 > env->num_light)
+		errormsg(1);
 	split_line = ft_strsplit(line, '\t');
 	word = ft_strsplit(split_line[0], ',');
 	env->lights[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
@@ -103,6 +108,7 @@ static void		read_lights(char *line, t_env *env, int num_line)
 	env->lights[num_line].col = color(env->lights[num_line].col.r / 100, env->lights[num_line].col.g / 100, env->lights[num_line].col.b / 100);
 	freeshit(word);
 	freeshit(split_line);
+	return (1);
 }
 
 static void		read_env(char *line, t_env *env)
@@ -129,9 +135,9 @@ static void		read_env(char *line, t_env *env)
 	env->num_light = ft_atoi(split_line[5]);
 	env->num_obj = ft_atoi(split_line[6]);
 	freeshit(split_line);
-	if (!(env->lights = (t_light *)malloc(env->num_light * sizeof(t_light))))
+	if (!(env->lights = (t_light *)ft_memalloc(env->num_light * sizeof(t_light))))
 		exit(-1);
-	if (!(env->objs = (t_obj *)malloc(env->num_obj * sizeof(t_obj))))
+	if (!(env->objs = (t_obj *)ft_memalloc(env->num_obj * sizeof(t_obj))))
 		exit(-1);
 }
 
@@ -140,13 +146,16 @@ static void		check_comma(char **split_line, int i, int size)
 	size_t		count;
 	size_t		num_comma;
 	
-	while (i < size)
+	while (i <= size)
 	{
 		num_comma = 0;
 		count = 0;
 		while (split_line[i][count])
-			if (split_line[i][count++] == ',')
+		{
+			if (split_line[i][count] == ',')
 				++num_comma;
+			++count;
+		}
 		if (num_comma != 2)
 			errormsg(1);
 		++i;
@@ -199,7 +208,8 @@ static void		check_error(char *line, size_t num_hash)
 		while (line[count])
 		{
 			if (!ft_isdigit(line[count]) && !ft_isalpha(line[count])\
-				&& line[count] != ',' && line[count] != '\t' && line[count] != '-')
+				&& line[count] != ',' && line[count] != '\t' \
+				&& line[count] != '-' && line[count] != ' ')
 				errormsg(0);
 			++count;
 		}
@@ -231,19 +241,17 @@ int		parsing(char **av, t_env *env)
 		if (num_hash == 1)
 			read_env(line, env);
 		if (num_hash == 2)
-		{
-			read_lights(line, env, num_lights);
-			++num_lights;
-		}
+			if (read_lights(line, env, num_lights))
+				++num_lights;
 		if (num_hash == 3)
-		{
-			read_objects(line, env, num_objs);
-			++num_objs;
-		}
+			if (read_objects(line, env, num_objs))
+				++num_objs;
 		if (line[0] && line[0] == '#')
 			++num_hash;
 		ft_strdel(&line);
 	}
+	env->num_light = num_lights;
+	env->num_obj = num_objs;
 	close(fd);
     return (0);
 }

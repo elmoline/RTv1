@@ -6,7 +6,7 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 17:45:00 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/15 16:52:31 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/17 13:47:55 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ float	light_ray(t_env *env, t_light *light, t_vec p_hit, t_obj *obj)
 
 	t0 = 1000000000000000.0f;
 	n_hit = get_hit_point_normal(p_hit, obj);
-	light_ray.ori = add_vec(p_hit, scale(0.05f, n_hit));
+	light_ray.ori = add_vec(p_hit, scale(0.02f, n_hit));
 	light_ray.dir = normalize(sub_vec(light->pos, p_hit));
 	shadow_obj = get_obj_intersect(&light_ray, env, &t0);
 	t0 = magnitude(scale(t0, light_ray.dir));
