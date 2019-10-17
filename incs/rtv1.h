@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/17 13:15:24 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/17 16:26:36 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,6 @@ int				cone_intersect(t_ray *r, t_obj *s, float *t);
 int				deal_key(int key, void *s);
 int				deal_close(void);
 void			write_ppm(int key, t_env *env);
-int				error2(void);
+int				error_mlx(void);
 
 #endif

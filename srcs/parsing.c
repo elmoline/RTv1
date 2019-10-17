@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 16:25:18 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/17 15:45:57 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/10/17 16:55:51 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@ static void			errormsg(int msg)
 	else if (msg == 1)
 	{
 		ft_printf("Error: Wrong format in the scene file.\n");
+		exit(-1);
+	}
+	else if (msg == 2)
+	{
+		ft_printf("Error: Failed malloc.\n");
 		exit(-1);
 	}
 }
@@ -64,20 +69,24 @@ static int		read_objects(char *line, t_env *env, int num_line)
 		return (0);
 	if (num_line + 1 > env->num_obj)
 		errormsg(1);
-	split_line = ft_strsplit(line, '\t');
+	if (!(split_line = ft_strsplit(line, '\t')))
+		errormsg(2);
 	env->objs[num_line].type = read_type(split_line[0]);
 
-	word = ft_strsplit(split_line[1], ','); //pos
+	if (!(word = ft_strsplit(split_line[1], ',')))
+		errormsg(2);
 	env->objs[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
 	freeshit(word);
 
-	word = ft_strsplit(split_line[2], ','); //col
+	if (!(word = ft_strsplit(split_line[2], ',')))
+		errormsg(2);
 	env->objs[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
 	env->objs[num_line].col = color(env->objs[num_line].col.r / 100,\
 		env->objs[num_line].col.g / 100, env->objs[num_line].col.b / 100);
 	freeshit(word);
 
-	word = ft_strsplit(split_line[3], ','); //rot
+	if (!(word = ft_strsplit(split_line[3], ',')))
+		errormsg(2);
 	if (env->objs[num_line].type != 1)
 		env->objs[num_line].rot = get_axe(vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2])));
 	freeshit(word);
@@ -100,11 +109,14 @@ static int		read_lights(char *line, t_env *env, int num_line)
 		return (0);
 	if (num_line + 1 > env->num_light)
 		errormsg(1);
-	split_line = ft_strsplit(line, '\t');
-	word = ft_strsplit(split_line[0], ',');
+	if (!(split_line = ft_strsplit(line, '\t')))
+		errormsg(2);
+	if (!(word = ft_strsplit(split_line[0], ',')))
+		errormsg(2);
 	env->lights[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
 	freeshit(word);
-	word = ft_strsplit(split_line[1], ',');
+	if (!(word = ft_strsplit(split_line[1], ',')))
+		errormsg(2);
 	env->lights[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
 	env->lights[num_line].col = color(env->lights[num_line].col.r / 100,\
 		env->lights[num_line].col.g / 100, env->lights[num_line].col.b / 100);
@@ -120,15 +132,19 @@ static void		read_env(char *line, t_env *env)
 
 	if (!ft_isdigit(line[0]))
 		return ;
-	split_line = ft_strsplit(line, '\t');
-	word = ft_strsplit(split_line[0], ','); //win
+	if (!(split_line = ft_strsplit(line, '\t')))
+		errormsg(2);
+	if (!(word = ft_strsplit(split_line[0], ',')))
+		errormsg(2);
 	env->win_x = ft_atoi(word[0]);
 	env->win_y = ft_atoi(word[1]);
 	freeshit(word);
-	word = ft_strsplit(split_line[1], ','); //cam
+	if (!(word = ft_strsplit(split_line[1], ',')))
+		errormsg(2);
 	env->cam.pos = vec(ft_atoi(word[0]), ft_atoi(word[1]) ,ft_atoi(word[2]));
 	freeshit(word);
-	word = ft_strsplit(split_line[2], ','); //camrot
+	if (!(word = ft_strsplit(split_line[2], ',')))
+		errormsg(2);
 	env->cam.rot = vec(deg2rad(ft_atoi(word[0])), deg2rad(ft_atoi(word[1])), deg2rad(ft_atoi(word[2])));
 	freeshit(word);
 	env->cam.fov = ft_atoi(split_line[3]);
@@ -169,7 +185,8 @@ static void		check_objs(char *line)
 	char	**split_line;
 	int		count;
 	
-	split_line = ft_strsplit(line, '\t'); // 0 to 4
+	if (!(split_line = ft_strsplit(line, '\t')))
+		errormsg(2);
 	count = 0;
 	while (count <= 4)
 	{
@@ -186,7 +203,8 @@ static void		check_lights(char *line)
 	char	**split_line;
 	int		count;
 
-	split_line = ft_strsplit(line, '\t'); // 0 to 1
+	if (!(split_line = ft_strsplit(line, '\t')))
+		errormsg(2);
 	count = 0;
 	while (count <= 1)
 	{
@@ -206,7 +224,8 @@ static void		check_env(char *line)
 
 	count = 0;
 	num_comma = 0;
-	split_line = ft_strsplit(line, '\t'); // 0 to 6
+	if (!(split_line = ft_strsplit(line, '\t')))
+		errormsg(2);
 	while (count <= 6)
 	{
 		if (!split_line[count])

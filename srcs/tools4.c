@@ -6,7 +6,7 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/15 14:03:04 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/15 14:19:03 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/17 16:26:01 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int		deal_close(void)
 	return (0);
 }
 
-int		error2(void)
+int		error_mlx(void)
 {
 	ft_printf("Error creating window with MLX\n");
 	exit(-1);
