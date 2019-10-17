@@ -6,11 +6,26 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 16:25:18 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/15 17:30:56 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/17 13:09:24 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
+#include <stdio.h>
+
+static void			errormsg(int msg)
+{
+	if (msg == 0)
+	{
+		ft_printf("Error: Wrong character in the scene file.\n");
+		exit(-1);
+	}
+	else if (msg == 1)
+	{
+		ft_printf("Error: Wrong format in the scene file.\n");
+		exit(-1);
+	}
+}
 
 static void			freeshit(char **tab)
 {
@@ -54,23 +69,20 @@ static void		read_objects(char *line, t_env *env, int num_line)
 	env->objs[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
 	freeshit(word);
 
-	if (env->objs[num_line].type == 3)
-		env->objs[num_line].rad = deg2rad(ft_atoi(split_line[2]));
-	else
-		env->objs[num_line].rad = ft_atoi(split_line[2]);
+	word = ft_strsplit(split_line[2], ','); //col
+	env->objs[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
+	env->objs[num_line].col = color(env->objs[num_line].col.r / 100, env->objs[num_line].col.g / 100, env->objs[num_line].col.b / 100);
+	freeshit(word);
 
 	word = ft_strsplit(split_line[3], ','); //rot
 	if (env->objs[num_line].type != 1)
 		env->objs[num_line].rot = get_axe(vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2])));
 	freeshit(word);
 
-	word = ft_strsplit(split_line[4], ','); //col
-	env->objs[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
-	env->objs[num_line].col = color(env->objs[num_line].col.r / 100, env->objs[num_line].col.g / 100, env->objs[num_line].col.b / 100);
-	freeshit(word);
-
-	env->objs[num_line].reflect = ft_atoi(split_line[5]);
-
+	if (env->objs[num_line].type == 3)
+		env->objs[num_line].rad = deg2rad(ft_atoi(split_line[4]));
+	else
+		env->objs[num_line].rad = ft_atoi(split_line[4]);
 
 	freeshit(split_line);
 }
@@ -80,19 +92,16 @@ static void		read_lights(char *line, t_env *env, int num_line)
 	char	**split_line;
 	char	**word;
 
-	if (!ft_isdigit(line[0]))
+	if (!ft_isdigit(line[0]) && line[0] != '-')
 		return ;
 	split_line = ft_strsplit(line, '\t');
-
 	word = ft_strsplit(split_line[0], ',');
 	env->lights[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
 	freeshit(word);
-
 	word = ft_strsplit(split_line[1], ',');
 	env->lights[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
 	env->lights[num_line].col = color(env->lights[num_line].col.r / 100, env->lights[num_line].col.g / 100, env->lights[num_line].col.b / 100);
 	freeshit(word);
-
 	freeshit(split_line);
 }
 
@@ -104,20 +113,16 @@ static void		read_env(char *line, t_env *env)
 	if (!ft_isdigit(line[0]))
 		return ;
 	split_line = ft_strsplit(line, '\t');
-
 	word = ft_strsplit(split_line[0], ','); //win
 	env->win_x = ft_atoi(word[0]);
 	env->win_y = ft_atoi(word[1]);
 	freeshit(word);
-	
 	word = ft_strsplit(split_line[1], ','); //cam
 	env->cam.pos = vec(ft_atoi(word[0]), ft_atoi(word[1]) ,ft_atoi(word[2]));
 	freeshit(word);
-
 	word = ft_strsplit(split_line[2], ','); //camrot
 	env->cam.rot = vec(deg2rad(ft_atoi(word[0])), deg2rad(ft_atoi(word[1])), deg2rad(ft_atoi(word[2])));
 	freeshit(word);
-
 	env->cam.fov = ft_atoi(split_line[3]);
 	env->ambient = ft_atoi(split_line[4]);
 	env->ambient /= 100;
@@ -130,7 +135,61 @@ static void		read_env(char *line, t_env *env)
 		exit(-1);
 }
 
-static void		check_error(char *line)
+static void		check_comma(char **split_line, int i, int size)
+{
+	size_t		count;
+	size_t		num_comma;
+	
+	while (i < size)
+	{
+		num_comma = 0;
+		count = 0;
+		while (split_line[i][count])
+			if (split_line[i][count++] == ',')
+				++num_comma;
+		if (num_comma != 2)
+			errormsg(1);
+		++i;
+	}
+}
+
+static void		check_objs(char *line)
+{
+	char	**split_line;
+	
+	split_line = ft_strsplit(line, '\t');
+	check_comma(split_line, 1, 3);
+	freeshit(split_line);
+}
+
+static void		check_lights(char *line)
+{
+	char	**split_line;
+
+	split_line = ft_strsplit(line, '\t');
+	check_comma(split_line, 0, 1);
+	freeshit(split_line);
+}
+
+static void		check_env(char *line)
+{
+	char	**split_line;
+	int		count;
+	int		num_comma;
+
+	count = 0;
+	num_comma = 0;
+	split_line = ft_strsplit(line, '\t');
+	while (split_line[0][count])
+		if (split_line[0][count++] == ',')
+			++num_comma;
+	if (num_comma != 1)
+		errormsg(1);
+	check_comma(split_line, 1, 2);
+	freeshit(split_line);
+}
+
+static void		check_error(char *line, size_t num_hash)
 {
 	int		count;
 
@@ -141,16 +200,19 @@ static void		check_error(char *line)
 		{
 			if (!ft_isdigit(line[count]) && !ft_isalpha(line[count])\
 				&& line[count] != ',' && line[count] != '\t' && line[count] != '-')
-			{
-				ft_printf("Error: Wrong character in the scene file. (%c)\n", line[count]);
-				exit(-1);
-			}
+				errormsg(0);
 			++count;
 		}
 	}
+	if (num_hash == 1 && ft_isdigit(line[0]))
+		check_env(line);
+	if (num_hash == 2 && (ft_isdigit(line[0]) || line[0] == '-'))
+		check_lights(line);
+	if (num_hash == 3 && ft_isalpha(line[0]))
+		check_objs(line);
 }
 
-int		parsing(int ac, char **av, t_env *env)
+int		parsing(char **av, t_env *env)
 {
 	int		fd;
 	char	*line;
@@ -158,7 +220,6 @@ int		parsing(int ac, char **av, t_env *env)
 	size_t	num_objs;
 	size_t	num_hash;
 
-	ac = 0;
 	if ((fd = open(av[1], O_RDONLY)) == -1)
 		exit(-1);
 	num_lights = 0;
@@ -166,7 +227,7 @@ int		parsing(int ac, char **av, t_env *env)
 	num_hash = 0;
 	while (get_next_line(fd, &line))
 	{
-		check_error(line);
+		check_error(line, num_hash);
 		if (num_hash == 1)
 			read_env(line, env);
 		if (num_hash == 2)
