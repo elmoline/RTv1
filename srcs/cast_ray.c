@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cast_ray.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 17:45:00 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/17 13:47:55 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/21 13:53:28 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,28 @@ float	light_ray(t_env *env, t_light *light, t_vec p_hit, t_obj *obj)
 	return (0.0f);
 }
 
+t_vec	reflect(t_vec i, t_vec n)
+{
+	return (scale(2.0f * dot(n, i), sub_vec(n, i)));
+}
+
+int		specular_light(t_env *env, t_obj *obj, t_vec p_hit, t_col *col, t_ray *ray, int j)
+{
+	t_ray light_ray;
+	
+	t_vec n_hit = get_hit_point_normal(p_hit, obj);
+	light_ray.dir = normalize(sub_vec(env->lights[j].pos, p_hit));
+	t_vec E = normalize(scale(-1.0f, light_ray.dir));
+	t_vec R = reflect(E, n_hit);
+	float specular = pow(max(dot(R, normalize(ray->dir)), 0.0), 50) * 0.1f;
+	t_vec specular_col = scale(specular, vec(env->lights[j].col.r, env->lights[j].col.g, env->lights[j].col.b));
+
+	col->r += specular_col.x;
+	col->g += specular_col.y;
+	col->b += specular_col.z;
+	return (0);
+}
+
 int		cast_ray(t_env *env, t_ray *ray)
 {
 	int		j;
@@ -106,6 +128,7 @@ int		cast_ray(t_env *env, t_ray *ray)
 		col.r += (env->ambient + t * env->lights[j].col.r) * curr_obj->col.r;
 		col.g += (env->ambient + t * env->lights[j].col.g) * curr_obj->col.g;
 		col.b += (env->ambient + t * env->lights[j].col.b) * curr_obj->col.b;
+		specular_light(env, curr_obj, p_hit, &col, ray, j);
 		++j;
 	}
 	col.r = (col.r * 255.0f > 255.0f ? 255.0f : col.r * 255.0f);

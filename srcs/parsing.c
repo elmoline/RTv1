@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 16:25:18 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/17 16:55:51 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/21 13:52:34 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void			freeshit(char **tab)
 	tab = NULL;
 }
 
-static int		read_type(char	*word)
+static int		read_type(char *word)
 {
 	if (!ft_strcmp(word, "Plane") || !ft_strcmp(word, "plane"))
 		return (0);
@@ -58,6 +58,23 @@ static int		read_type(char	*word)
 	if (!ft_strcmp(word, "Cone") || !ft_strcmp(word, "cone"))
 		return (3);
 	return (4);
+}
+
+static int		read_objects2(char **split_line, int num_line, t_env *env)
+{
+	char	**word;
+
+	if (!(word = ft_strsplit(split_line[3], ',')))
+		errormsg(2);
+	if (env->objs[num_line].type != 1)
+		env->objs[num_line].rot = get_axe(vec(ft_atoi(word[0]),\
+			ft_atoi(word[1]), ft_atoi(word[2])));
+	freeshit(word);
+	if (env->objs[num_line].type == 3)
+		env->objs[num_line].rad = deg2rad(ft_atoi(split_line[4]));
+	else
+		env->objs[num_line].rad = ft_atoi(split_line[4]);
+	return (0);
 }
 
 static int		read_objects(char *line, t_env *env, int num_line)
@@ -72,30 +89,19 @@ static int		read_objects(char *line, t_env *env, int num_line)
 	if (!(split_line = ft_strsplit(line, '\t')))
 		errormsg(2);
 	env->objs[num_line].type = read_type(split_line[0]);
-
 	if (!(word = ft_strsplit(split_line[1], ',')))
 		errormsg(2);
-	env->objs[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
+	env->objs[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]),\
+		ft_atoi(word[2]));
 	freeshit(word);
-
 	if (!(word = ft_strsplit(split_line[2], ',')))
 		errormsg(2);
-	env->objs[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
+	env->objs[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]),\
+		ft_atoi(word[2]));
 	env->objs[num_line].col = color(env->objs[num_line].col.r / 100,\
 		env->objs[num_line].col.g / 100, env->objs[num_line].col.b / 100);
 	freeshit(word);
-
-	if (!(word = ft_strsplit(split_line[3], ',')))
-		errormsg(2);
-	if (env->objs[num_line].type != 1)
-		env->objs[num_line].rot = get_axe(vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2])));
-	freeshit(word);
-
-	if (env->objs[num_line].type == 3)
-		env->objs[num_line].rad = deg2rad(ft_atoi(split_line[4]));
-	else
-		env->objs[num_line].rad = ft_atoi(split_line[4]);
-
+	read_objects2(split_line, num_line, env);
 	freeshit(split_line);
 	return (1);
 }
@@ -113,16 +119,34 @@ static int		read_lights(char *line, t_env *env, int num_line)
 		errormsg(2);
 	if (!(word = ft_strsplit(split_line[0], ',')))
 		errormsg(2);
-	env->lights[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
+	env->lights[num_line].pos = vec(ft_atoi(word[0]), ft_atoi(word[1]),\
+		ft_atoi(word[2]));
 	freeshit(word);
 	if (!(word = ft_strsplit(split_line[1], ',')))
 		errormsg(2);
-	env->lights[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]), ft_atoi(word[2]));
+	env->lights[num_line].col = color(ft_atoi(word[0]), ft_atoi(word[1]),\
+		ft_atoi(word[2]));
 	env->lights[num_line].col = color(env->lights[num_line].col.r / 100,\
 		env->lights[num_line].col.g / 100, env->lights[num_line].col.b / 100);
 	freeshit(word);
 	freeshit(split_line);
 	return (1);
+}
+
+static void		read_env2(char **split_line, t_env *env)
+{
+	char	**word;
+
+	if (!(word = ft_strsplit(split_line[2], ',')))
+		errormsg(2);
+	env->cam.rot = vec(deg2rad(ft_atoi(word[0])), deg2rad(ft_atoi(word[1])),\
+		deg2rad(ft_atoi(word[2])));
+	freeshit(word);
+	env->cam.fov = ft_atoi(split_line[3]);
+	env->ambient = ft_atoi(split_line[4]);
+	env->ambient /= 100;
+	env->num_light = ft_atoi(split_line[5]);
+	env->num_obj = ft_atoi(split_line[6]);
 }
 
 static void		read_env(char *line, t_env *env)
@@ -131,7 +155,7 @@ static void		read_env(char *line, t_env *env)
 	char	**word;
 
 	if (!ft_isdigit(line[0]))
-		return ;
+		return;
 	if (!(split_line = ft_strsplit(line, '\t')))
 		errormsg(2);
 	if (!(word = ft_strsplit(split_line[0], ',')))
@@ -143,17 +167,10 @@ static void		read_env(char *line, t_env *env)
 		errormsg(2);
 	env->cam.pos = vec(ft_atoi(word[0]), ft_atoi(word[1]) ,ft_atoi(word[2]));
 	freeshit(word);
-	if (!(word = ft_strsplit(split_line[2], ',')))
-		errormsg(2);
-	env->cam.rot = vec(deg2rad(ft_atoi(word[0])), deg2rad(ft_atoi(word[1])), deg2rad(ft_atoi(word[2])));
-	freeshit(word);
-	env->cam.fov = ft_atoi(split_line[3]);
-	env->ambient = ft_atoi(split_line[4]);
-	env->ambient /= 100;
-	env->num_light = ft_atoi(split_line[5]);
-	env->num_obj = ft_atoi(split_line[6]);
+	read_env2(split_line, env);
 	freeshit(split_line);
-	if (!(env->lights = (t_light *)ft_memalloc(env->num_light * sizeof(t_light))))
+	if (!(env->lights = (t_light *)ft_memalloc(env->num_light *\
+		sizeof(t_light))))
 		exit(-1);
 	if (!(env->objs = (t_obj *)ft_memalloc(env->num_obj * sizeof(t_obj))))
 		exit(-1);
@@ -163,7 +180,7 @@ static void		check_comma(char **split_line, int i, int size)
 {
 	size_t		count;
 	size_t		num_comma;
-	
+
 	while (i <= size)
 	{
 		num_comma = 0;
@@ -184,7 +201,7 @@ static void		check_objs(char *line)
 {
 	char	**split_line;
 	int		count;
-	
+
 	if (!(split_line = ft_strsplit(line, '\t')))
 		errormsg(2);
 	count = 0;
@@ -266,18 +283,11 @@ static void		check_error(char *line, size_t num_hash)
 		check_objs(line);
 }
 
-int		parsing(char **av, t_env *env)
+void	parsing_loop(int fd, t_env *env, size_t num_lights, size_t num_objs)
 {
-	int		fd;
 	char	*line;
-	size_t	num_lights;
-	size_t	num_objs;
 	size_t	num_hash;
 
-	if ((fd = open(av[1], O_RDONLY)) == -1)
-		exit(-1);
-	num_lights = 0;
-	num_objs = 0;
 	num_hash = 0;
 	while (get_next_line(fd, &line))
 	{
@@ -296,6 +306,17 @@ int		parsing(char **av, t_env *env)
 	}
 	env->num_light = num_lights;
 	env->num_obj = num_objs;
+}
+
+int		parsing(char **av, t_env *env)
+{
+	int		fd;
+	size_t	num_hash;
+
+	if ((fd = open(av[1], O_RDONLY)) == -1)
+		exit(-1);
+	num_hash = 0;
+	parsing_loop(fd, env, 0, 0);
 	close(fd);
     return (0);
 }
