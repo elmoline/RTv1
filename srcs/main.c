@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/22 16:14:56 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/23 14:17:24 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,13 @@ static int	window_init(t_mlx *mlx, int win_x, int win_y)
 {
 	int	tmp;
 
-	mlx->mlx_ptr = mlx_init();
-	mlx->win_ptr = mlx_new_window(NULL, win_x, win_y, "RTv1");
-	mlx->img_ptr = mlx_new_image(mlx->mlx_ptr, win_x, win_y);
-	mlx->data = (int *)mlx_get_data_addr(mlx->img_ptr, &tmp, &tmp, &tmp);
-	if (!mlx->mlx_ptr || !mlx->win_ptr || !mlx->img_ptr || !mlx->data)
+	if (!(mlx->mlx_ptr = mlx_init()))
+		return (-1);
+	if (!(mlx->win_ptr = mlx_new_window(mlx->mlx_ptr, win_x, win_y, "RTv1")))
+		return (-1);
+	if (!(mlx->img_ptr = mlx_new_image(mlx->mlx_ptr, win_x, win_y)))
+		return (-1);
+	if (!(mlx->data = (int *)mlx_get_data_addr(mlx->img_ptr, &tmp, &tmp, &tmp)))
 		return (-1);
 	return (0);
 }

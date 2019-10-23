@@ -1,5 +1,5 @@
 #Windows	Camera_Pos		Cam_Rot		Cam_FOV		Ambient%	Num_Lights	Num_Obj
-1080,720	0,0,2000		0,0,0		30		20		1		3
+1080,720	0,0,2000		0,0,0		30			20			1			3			
 
 #Light_Pos	Light_Col
 500,0,1000	50,50,50

@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 16:25:18 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/22 16:01:49 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/23 14:02:35 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ static void	parsing_loop(int fd, t_env *env, size_t num_lights, size_t num_objs)
 			++num_hash;
 		ft_strdel(&line);
 	}
+	if (num_hash == 0)
+		errormsg(1);
 	env->num_light = num_lights;
 	env->num_obj = num_objs;
 }
