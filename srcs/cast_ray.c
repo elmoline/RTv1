@@ -6,133 +6,79 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 17:45:00 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/21 13:53:28 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/10/22 14:26:36 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-t_obj	*get_obj_intersect(t_ray *ray, t_env *env, float *t)
+float	shadows(t_env *env, t_light *light, t_obj *obj)
 {
-	int	closest;
-	int	i;
-
-	closest = -1;
-	i = 0;
-	while (i < env->num_obj)
-	{
-		if (env->objs[i].type == 0 && plane_intersect(ray, &env->objs[i], t))
-			closest = i;
-		if (env->objs[i].type == 1 && sphere_intersect(ray, &env->objs[i], t))
-			closest = i;
-		if (env->objs[i].type == 2 && cylinder_intersect(ray, &env->objs[i], t))
-			closest = i;
-		if (env->objs[i].type == 3 && cone_intersect(ray, &env->objs[i], t))
-			closest = i;
-		++i;
-	}
-	if (closest == -1)
-		return (NULL);
-	return (&env->objs[closest]);
-}
-
-t_vec	get_hit_point_normal(t_vec p_hit, t_obj *obj)
-{
-	t_vec	n_hit;
-	t_vec	tmp;
-
-	n_hit = vec(0, 1, 0);
-	if (obj->type == 0)
-		n_hit = scale(-1, obj->rot);
-	else if (obj->type == 1)
-		n_hit = normalize(sub_vec(p_hit, obj->pos));
-	else if (obj->type == 2)
-	{
-		n_hit = cross(cross(obj->rot, sub_vec(p_hit, obj->pos)), obj->rot);
-		n_hit = normalize(n_hit);
-	}
-	else if (obj->type == 3)
-	{
-		tmp = sub_vec(p_hit, obj->pos);
-		if (dot(obj->rot, tmp) < 0.0f)
-			obj->rot = scale(-1, obj->rot);
-		n_hit = scale(dot(obj->rot, tmp) / dot(tmp, tmp), tmp);
-		n_hit = normalize(sub_vec(n_hit, obj->rot));
-	}
-	return (n_hit);
-}
-
-float	light_ray(t_env *env, t_light *light, t_vec p_hit, t_obj *obj)
-{
-	t_vec	n_hit;
 	t_ray	light_ray;
 	t_obj	*shadow_obj;
-	float	t0;
-	float	t1;
+	float	d1;
+	float	d2;
+	float	res;
 
-	t0 = 1000000000000000.0f;
-	n_hit = get_hit_point_normal(p_hit, obj);
-	light_ray.ori = add_vec(p_hit, scale(0.02f, n_hit));
-	light_ray.dir = normalize(sub_vec(light->pos, p_hit));
-	shadow_obj = get_obj_intersect(&light_ray, env, &t0);
-	t0 = magnitude(scale(t0, light_ray.dir));
-	t1 = magnitude(sub_vec(light->pos, p_hit));
-	if (shadow_obj == NULL || shadow_obj == obj || t0 > t1)
+	res = 0.0f;
+	d1 = 0.0f;
+	d2 = 0.0f;
+	light_ray.ori = add_vec(obj->hit.ori, scale(0.02f, obj->hit.dir));
+	light_ray.dir = normalize(sub_vec(light->pos, obj->hit.ori));
+	if ((shadow_obj = get_obj_intersect(env, &light_ray)) != NULL)
 	{
-		t0 = dot(n_hit, light_ray.dir);
-		return (t0 < 0.0f ? 0.0f : t0);
+		d1 = magnitude(sub_vec(shadow_obj->hit.ori, obj->hit.ori));
+		d2 = magnitude(sub_vec(light->pos, obj->hit.ori));
 	}
-	return (0.0f);
+	if (shadow_obj == NULL || shadow_obj == obj || d1 > d2)
+		res = dot(obj->hit.dir, light_ray.dir);
+	return (res < 0.0f ? 0.0f : res);
 }
 
 t_vec	reflect(t_vec i, t_vec n)
 {
-	return (scale(2.0f * dot(n, i), sub_vec(n, i)));
+	float	reflect;
+	t_vec	tmp;
+
+	reflect = 2.0f * dot(n, i);
+	tmp = scale(reflect, n);
+	return (sub_vec(tmp, i));
 }
 
-int		specular_light(t_env *env, t_obj *obj, t_vec p_hit, t_col *col, t_ray *ray, int j)
+float	shine(t_light *light, t_obj *obj, t_ray *ray)
 {
-	t_ray light_ray;
-	
-	t_vec n_hit = get_hit_point_normal(p_hit, obj);
-	light_ray.dir = normalize(sub_vec(env->lights[j].pos, p_hit));
-	t_vec E = normalize(scale(-1.0f, light_ray.dir));
-	t_vec R = reflect(E, n_hit);
-	float specular = pow(max(dot(R, normalize(ray->dir)), 0.0), 50) * 0.1f;
-	t_vec specular_col = scale(specular, vec(env->lights[j].col.r, env->lights[j].col.g, env->lights[j].col.b));
+	t_vec l_dir;
+	float res;
 
-	col->r += specular_col.x;
-	col->g += specular_col.y;
-	col->b += specular_col.z;
-	return (0);
+	l_dir = normalize(sub_vec(obj->hit.ori, light->pos));
+	l_dir = reflect(l_dir, obj->hit.dir);
+	res = pow(fmax(dot(l_dir, normalize(ray->dir)), 0.0), 30);
+	return (res < 0.0f ? 0.0f : res);
 }
 
 int		cast_ray(t_env *env, t_ray *ray)
 {
 	int		j;
-	float	t;
 	t_col	col;
 	t_obj	*curr_obj;
-	t_vec	p_hit;
+	float	res;
 
-	t = 1000000000000.0f;
-	if (!(curr_obj = get_obj_intersect(ray, env, &t)))
+	if (!(curr_obj = get_obj_intersect(env, ray)))
 		return (0);
 	col = color(0, 0, 0);
-	p_hit = add_vec(ray->ori, scale(t, ray->dir));
+	add_color(&col, &curr_obj->col, env->ambient);
 	j = 0;
 	while (j < env->num_light)
 	{
-		t = light_ray(env, &env->lights[j], p_hit, curr_obj);
-		t *= 1 - env->ambient;
-		col.r += (env->ambient + t * env->lights[j].col.r) * curr_obj->col.r;
-		col.g += (env->ambient + t * env->lights[j].col.g) * curr_obj->col.g;
-		col.b += (env->ambient + t * env->lights[j].col.b) * curr_obj->col.b;
-		specular_light(env, curr_obj, p_hit, &col, ray, j);
+		res = shadows(env, &env->lights[j], curr_obj);
+		res *= 1 - env->ambient;
+		add_color(&col, &curr_obj->col, res);
+		res = shine(&env->lights[j], curr_obj, ray);
+		add_color(&col, &env->lights[j].col, res);
 		++j;
 	}
-	col.r = (col.r * 255.0f > 255.0f ? 255.0f : col.r * 255.0f);
-	col.g = (col.g * 255.0f > 255.0f ? 255.0f : col.g * 255.0f);
-	col.b = (col.b * 255.0f > 255.0f ? 255.0f : col.b * 255.0f);
+	col.r = fmin(col.r * 255.0f, 255.0f);
+	col.g = fmin(col.g * 255.0f, 255.0f);
+	col.b = fmin(col.b * 255.0f, 255.0f);
 	return (((uint8_t)col.r << 16) | ((uint8_t)col.g << 8) | ((uint8_t)col.b));
 }

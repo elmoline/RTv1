@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   intersect.c                                        :+:      :+:    :+:   */
+/*   intersect1.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/20 14:54:31 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/14 16:11:43 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/22 14:27:00 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,13 @@ int			cylinder_intersect(t_ray *r, t_obj *s, float *t)
 	a = dot(cross2, cross2);
 	b = 2 * dot(cross2, cross1);
 	c = dot(cross1, cross1) - (s->rad * s->rad * dot(s->rot, s->rot));
-	return (equation_solver(a, b, c, t));
+	if (equation_solver(a, b, c, t) == 1)
+	{
+		s->hit.ori = add_vec(r->ori, scale(*t, r->dir));
+		s->hit.dir = get_phit_normal(s->hit.ori, s);
+		return (1);
+	}
+	return (0);
 }
 
 int			sphere_intersect(t_ray *r, t_obj *s, float *t)
@@ -63,7 +69,13 @@ int			sphere_intersect(t_ray *r, t_obj *s, float *t)
 	a = dot(r->dir, r->dir);
 	b = 2 * dot(r->dir, dist);
 	c = dot(dist, dist) - (s->rad * s->rad);
-	return (equation_solver(a, b, c, t));
+	if (equation_solver(a, b, c, t) == 1)
+	{
+		s->hit.ori = add_vec(r->ori, scale(*t, r->dir));
+		s->hit.dir = get_phit_normal(s->hit.ori, s);
+		return (1);
+	}
+	return (0);
 }
 
 int			plane_intersect(t_ray *r, t_obj *s, float *t)
@@ -82,6 +94,8 @@ int			plane_intersect(t_ray *r, t_obj *s, float *t)
 		if (t0 > 0.0f && t0 < *t)
 		{
 			*t = t0;
+			s->hit.ori = add_vec(r->ori, scale(*t, r->dir));
+			s->hit.dir = get_phit_normal(s->hit.ori, s);
 			return (1);
 		}
 	}
@@ -102,5 +116,11 @@ int			cone_intersect(t_ray *r, t_obj *s, float *t)
 	b = 2 * ((dot(r->dir, s->rot) * dot(p0, s->rot)) - dot(r->dir, p0) \
 		* angle * angle);
 	c = dot(p0, s->rot) * dot(p0, s->rot) - dot(p0, p0) * angle * angle;
-	return (equation_solver(a, b, c, t));
+	if (equation_solver(a, b, c, t) == 1)
+	{
+		s->hit.ori = add_vec(r->ori, scale(*t, r->dir));
+		s->hit.dir = get_phit_normal(s->hit.ori, s);
+		return (1);
+	}
+	return (0);
 }

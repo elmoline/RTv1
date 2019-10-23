@@ -6,7 +6,7 @@
 #    By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 16:47:44 by evogel            #+#    #+#              #
-#    Updated: 2019/10/15 16:56:21 by evogel           ###   ########.fr        #
+#    Updated: 2019/10/22 14:58:37 by evogel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,15 +17,19 @@ NAME = RTv1
 #########
 
 SRCS = main.c \
+	   parsing1.c \
+	   parsing2.c \
+	   parsing3.c \
 	   render.c \
 	   cast_ray.c \
-	   intersect.c \
+	   intersect1.c \
+	   intersect2.c \
 	   tools1.c \
 	   tools2.c \
 	   tools3.c \
 	   tools4.c \
-	   write_ppm.c \
-	   parsing.c
+	   tools_mlx.c \
+	   write_ppm.c
 
 OBJS = $(SRCS:.c=.o)
 

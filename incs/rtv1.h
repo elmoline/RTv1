@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/17 16:26:36 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/22 15:57:46 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include "libft.h"
 # include <math.h>
 # include <fcntl.h>
+# include <float.h>
 
 # define WIN_X	1080
 # define WIN_Y	720
@@ -80,7 +81,7 @@ typedef struct	s_obj
 	float		rad;
 	t_vec		rot;
 	t_col		col;
-	float		reflect;
+	t_ray		hit;
 }				t_obj;
 
 typedef struct	s_mlx
@@ -109,6 +110,7 @@ float			deg2rad(int d);
 t_vec			vec(float x, float y, float z);
 t_vec4			vec4(float x, float y, float z, float w);
 t_col			color(float red, float green, float blue);
+void			add_color(t_col *ori, t_col *add, float amount);
 t_vec			sub_vec(t_vec v1, t_vec v2);
 float			dot(t_vec v1, t_vec v2);
 t_vec			cross(t_vec v1, t_vec v2);
@@ -123,18 +125,25 @@ t_vec			rotate_z(t_vec pt, double theta);
 t_vec			rotate_full(t_vec ori, t_vec rot);
 
 int				parsing(char **av, t_env *env);
+void			check_error(char *line, size_t num_hash);
+int				read_objects(char *line, t_env *env, int num_line);
 t_vec			get_axe(t_vec rot);
 
 int				render(t_env *env);
 int				cast_ray(t_env *env, t_ray *ray);
+t_obj			*get_obj_intersect(t_env *env, t_ray *ray);
 int				sphere_intersect(t_ray *r, t_obj *s, float *t);
 int				cylinder_intersect(t_ray *r, t_obj *s, float *t);
 int				plane_intersect(t_ray *r, t_obj *s, float *t);
 int				cone_intersect(t_ray *r, t_obj *s, float *t);
+t_vec			get_phit_normal(t_vec p_hit, t_obj *obj);
 
 int				deal_key(int key, void *s);
 int				deal_close(void);
+int				deal_expose(t_env *env);
 void			write_ppm(int key, t_env *env);
 int				error_mlx(void);
+void			errormsg(int msg);
+void			freetab(char **tab);
 
 #endif

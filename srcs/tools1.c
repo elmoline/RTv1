@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/08 16:51:38 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/15 16:50:56 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/22 14:31:27 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,6 @@ t_vec4	vec4(float x, float y, float z, float w)
 	return (res);
 }
 
-t_col	color(float red, float green, float blue)
-{
-	t_col	res;
-
-	res.r = red;
-	res.g = green;
-	res.b = blue;
-	return (res);
-}
-
 float	magnitude(t_vec v)
 {
 	return (sqrt(dot(v, v)));
@@ -58,4 +48,9 @@ t_vec	normalize(t_vec v)
 	if (mag > 0)
 		res = scale(1 / mag, v);
 	return (res);
+}
+
+float	deg2rad(int d)
+{
+	return (d * M_PI / 180);
 }

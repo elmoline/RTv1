@@ -6,37 +6,59 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/15 14:03:04 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/17 16:26:01 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/22 15:54:02 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-float	deg2rad(int d)
+t_col	color(float red, float green, float blue)
 {
-	return (d * M_PI / 180);
+	t_col	res;
+
+	res.r = red;
+	res.g = green;
+	res.b = blue;
+	return (res);
 }
 
-int		deal_key(int key, void *param)
+void	add_color(t_col *ori, t_col *add, float amount)
 {
-	t_env	*env;
-
-	env = (t_env *)param;
-	if (key == 53)
-		exit(1);
-	else if (key == 36)
-		write_ppm(key, env);
-	return (0);
+	ori->r += add->r * amount;
+	ori->g += add->g * amount;
+	ori->b += add->b * amount;
 }
 
-int		deal_close(void)
+void	errormsg(int msg)
 {
-	exit(1);
-	return (0);
+	if (msg == 0)
+	{
+		ft_printf("Error: Wrong character in the scene file.\n");
+		exit(-1);
+	}
+	else if (msg == 1)
+	{
+		ft_printf("Error: Wrong format in the scene file.\n");
+		exit(-1);
+	}
+	else if (msg == 2)
+	{
+		ft_printf("Error: Failed malloc.\n");
+		exit(-1);
+	}
 }
 
-int		error_mlx(void)
+void	freetab(char **tab)
 {
-	ft_printf("Error creating window with MLX\n");
-	exit(-1);
+	int		c;
+
+	c = 0;
+	while (tab[c])
+	{
+		free(tab[c]);
+		tab[c] = NULL;
+		++c;
+	}
+	free(tab);
+	tab = NULL;
 }
