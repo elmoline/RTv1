@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/22 15:57:46 by evogel           ###   ########.fr       */
+/*   Updated: 2019/10/23 12:11:12 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@
 # include <math.h>
 # include <fcntl.h>
 # include <float.h>
-
-# define WIN_X	1080
-# define WIN_Y	720
 
 typedef struct	s_vec
 {
