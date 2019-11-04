@@ -1,0 +1,9 @@
+#Windows	Camera_Pos	Cam_Rot		Cam_FOV		Ambient%	Num_Lights	Num_Obj
+1080,720	0,100,1500	0,0,0		30			10			1			2
+
+#Light_Pos	Light_Col
+200,200,600	100,100,100
+
+#Object		Position	Color			Rotation	Radius
+Cone		0,0,0		100,100,0		0,0,0		40
+Plane		0,-150,0	0,0,100			0,0,0		0

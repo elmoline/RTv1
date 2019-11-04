@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 17:45:00 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/22 14:26:36 by evogel           ###   ########.fr       */
+/*   Updated: 2019/11/04 13:09:33 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,11 @@ float	shine(t_light *light, t_obj *obj, t_ray *ray)
 	t_vec l_dir;
 	float res;
 
+	if (obj->type == 0)
+		return (0.0f);
 	l_dir = normalize(sub_vec(obj->hit.ori, light->pos));
 	l_dir = reflect(l_dir, obj->hit.dir);
-	res = pow(fmax(dot(l_dir, normalize(ray->dir)), 0.0), 30);
+	res = pow(fmax(dot(l_dir, normalize(ray->dir)), 0.0), 40);
 	return (res < 0.0f ? 0.0f : res);
 }
 
