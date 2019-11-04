@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 16:25:18 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/23 14:02:35 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/10/23 14:23:47 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int			parsing(char **av, t_env *env)
 	size_t	num_hash;
 
 	if ((fd = open(av[1], O_RDONLY)) == -1)
-		exit(-1);
+		errormsg(3);
 	num_hash = 0;
 	parsing_loop(fd, env, 0, 0);
 	close(fd);

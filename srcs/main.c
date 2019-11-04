@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 14:38:14 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/23 14:17:24 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/10/23 14:24:06 by wael-mos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int			main(int ac, char **av)
 	t_env	env;
 
 	if (ac != 2)
-		return (ft_printf("usage:\n"));
+		errormsg(3);
 	ft_bzero((void *)&env, sizeof(t_env));
 	parsing(av, &env);
 	if (window_init(&env.mlx, env.win_x, env.win_y) == -1)
