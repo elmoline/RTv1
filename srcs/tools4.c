@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/15 14:03:04 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/23 14:23:40 by wael-mos         ###   ########.fr       */
+/*   Updated: 2019/11/04 13:47:41 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	errormsg(int msg)
 	else if (msg == 2)
 		ft_printf("Error: Failed malloc.\n");
 	else if (msg == 3)
-		ft_printf("Usage: ./rtv1 [file.scene]\n");
+		ft_printf("Usage: ./RTv1 [file.scene]\n");
 	exit(-1);
 }
 
