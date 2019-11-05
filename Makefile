@@ -6,7 +6,7 @@
 #    By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/07 16:47:44 by evogel            #+#    #+#              #
-#    Updated: 2019/10/22 14:58:37 by evogel           ###   ########.fr        #
+#    Updated: 2019/11/05 15:05:53 by evogel           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,8 +28,7 @@ SRCS = main.c \
 	   tools2.c \
 	   tools3.c \
 	   tools4.c \
-	   tools_mlx.c \
-	   write_ppm.c
+	   tools_mlx.c
 
 OBJS = $(SRCS:.c=.o)
 

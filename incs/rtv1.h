@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 10:54:10 by wael-mos          #+#    #+#             */
-/*   Updated: 2019/10/23 12:11:12 by evogel           ###   ########.fr       */
+/*   Updated: 2019/11/05 15:06:04 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,6 @@ t_vec			get_phit_normal(t_vec p_hit, t_obj *obj);
 int				deal_key(int key, void *s);
 int				deal_close(void);
 int				deal_expose(t_env *env);
-void			write_ppm(int key, t_env *env);
 int				error_mlx(void);
 void			errormsg(int msg);
 void			freetab(char **tab);

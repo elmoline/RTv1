@@ -6,7 +6,7 @@
 /*   By: evogel <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/22 14:31:37 by evogel            #+#    #+#             */
-/*   Updated: 2019/10/22 14:53:16 by evogel           ###   ########.fr       */
+/*   Updated: 2019/11/05 15:06:20 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ int		deal_key(int key, void *param)
 	env = (t_env *)param;
 	if (key == 53)
 		exit(1);
-	else if (key == 36)
-		write_ppm(key, env);
 	return (0);
 }
 
