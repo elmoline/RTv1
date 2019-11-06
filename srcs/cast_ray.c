@@ -6,7 +6,7 @@
 /*   By: wael-mos <wael-mos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 17:45:00 by evogel            #+#    #+#             */
-/*   Updated: 2019/11/04 13:09:33 by evogel           ###   ########.fr       */
+/*   Updated: 2019/11/06 15:26:54 by evogel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,9 @@ int		cast_ray(t_env *env, t_ray *ray)
 	{
 		res = shadows(env, &env->lights[j], curr_obj);
 		res *= 1 - env->ambient;
-		add_color(&col, &curr_obj->col, res);
+		col.r += res * curr_obj->col.r * env->lights[j].col.r;
+		col.g += res * curr_obj->col.g * env->lights[j].col.g;
+		col.b += res * curr_obj->col.b * env->lights[j].col.b;
 		res = shine(&env->lights[j], curr_obj, ray);
 		add_color(&col, &env->lights[j].col, res);
 		++j;
